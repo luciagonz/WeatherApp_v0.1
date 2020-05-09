@@ -7,16 +7,20 @@ public class Cities {
     private double currentDegrees;
     private double maxDegrees;
     private double minDegrees;
-    private String symbolWeather;
+    private Integer symbolWeatherID;
+    private Integer locationType;
 
-    public Cities(String name, String country, double currentDegrees, double maxDegrees, double minDegrees, String symbolWeather) {
+
+
+    public Cities(String name, String country, double currentDegrees, double maxDegrees, double minDegrees, Integer symbolWeatherID, Integer locationType) {
         System.out.println("City added");
         this.name = name;
         this.country = country;
         this.currentDegrees = currentDegrees;
         this.maxDegrees = maxDegrees;
         this.minDegrees = minDegrees;
-        this.symbolWeather = symbolWeather;
+        this.symbolWeatherID = symbolWeatherID;
+        this.locationType = locationType;
     }
 
     public String getName() {
@@ -59,11 +63,20 @@ public class Cities {
         this.minDegrees = minDegrees;
     }
 
-    public String getSymbolWeather() {
-        return symbolWeather;
+    public Integer getSymbolWeatherID() {
+        return symbolWeatherID;
     }
 
-    public void setSymbolWeather(String symbolWeather) {
-        this.symbolWeather = symbolWeather;
+    public void setSymbolWeatherID(Integer symbolWeatherID) {
+        this.symbolWeatherID = symbolWeatherID;
+    }
+
+    public Integer getLocationType() {
+        return locationType;
+    }
+
+    public void setLocationType(Integer locationType) {
+        this.locationType = locationType;
     }
 }
+

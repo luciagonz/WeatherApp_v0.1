@@ -28,14 +28,22 @@
             app:fontFamily="@font/poppins_light"
             app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/weather_cities_RV"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="horizontal"
-                />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/weather_cities_RV"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent" />
+
+        <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
+            android:id="@+id/indicator_weather_cities_RV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:spi_dotColor="@color/colorTextPrimary"
+            android:layout_gravity="center"
+            app:spi_dotSelectedColor="@color/colorPrimaryDark"
+            android:layout_marginTop="-20dp"
+            />
     </LinearLayout>
 
 </RelativeLayout>

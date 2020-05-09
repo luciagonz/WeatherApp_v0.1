@@ -36,7 +36,7 @@ public class VoiceCommands {
             System.out.println(speechRecognised.get(i));
 
             // WEATHER QUERIES IN ALL LOCATIONS  TODO : modify preference file in order to get locations
-            if (speechRecognised.get(i).contains("cardview_weather_city") & speechRecognised.get(i).contains("in") & speechRecognised.get(i).contains("locations")) {
+            if (speechRecognised.get(i).contains("weather") & speechRecognised.get(i).contains("in") & speechRecognised.get(i).contains("locations")) {
 
                 if(speechRecognised.get(i).contains("tomorrow")) {
                     fragmentDisplayed = "location";
@@ -47,7 +47,7 @@ public class VoiceCommands {
 
                 else if(speechRecognised.get(i).contains("forecast")) {
                     fragmentDisplayed = "location";
-                    speechReplayed = "This is the forecast cardview_weather_city in your locations";
+                    speechReplayed = "This is the forecast weather in your locations";
                     isSpeechRecognised = true;
                     break;
                 }
@@ -63,7 +63,7 @@ public class VoiceCommands {
 
 
             // WEATHER QUERIES IN CERTAIN LOCATION
-            else if (speechRecognised.get(i).contains("cardview_weather_city") & speechRecognised.get(i).contains("in")) {
+            else if (speechRecognised.get(i).contains("weather") & speechRecognised.get(i).contains("in")) {
 
                 if(speechRecognised.get(i).contains("tomorrow")) {
                     fragmentDisplayed = "location";
@@ -76,7 +76,7 @@ public class VoiceCommands {
                 else if(speechRecognised.get(i).contains("forecast")) {
                     fragmentDisplayed = "location";
                     cityRequest = getLocationFromRequest(speechRecognised.get(i), "in");
-                    speechReplayed = "This is the forecast cardview_weather_city in " + cityRequest;
+                    speechReplayed = "This is the forecast weather in " + cityRequest;
                     isSpeechRecognised = true;
                     break;
                 }
@@ -93,7 +93,7 @@ public class VoiceCommands {
 
 
             // WEATHER QUERIES IN DEFAULT LOCATION TODO : modify preference file in order to get default location
-            else if (speechRecognised.get(i).contains("cardview_weather_city")) {
+            else if (speechRecognised.get(i).contains("weather")) {
 
                 if(speechRecognised.get(i).contains("tomorrow")) {
                     fragmentDisplayed = "home";
@@ -104,7 +104,7 @@ public class VoiceCommands {
 
                 else if(speechRecognised.get(i).contains("forecast")) {
                     fragmentDisplayed = "home";
-                    speechReplayed = "This is the forecast cardview_weather_city in your default location";
+                    speechReplayed = "This is the forecast weather in your default location";
                     isSpeechRecognised = true;
                     break;
                 }

@@ -32,6 +32,8 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:29.0.0-alpha1'
     implementation 'com.android.support:appcompat-v7:29.0.0-alpha1'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation "ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:1.0.6"
+
 
 
 
