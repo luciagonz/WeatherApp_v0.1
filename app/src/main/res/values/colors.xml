@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#c471f5</color>
+    <color name="colorPrimaryDark">#8839B9</color>
+    <color name="colorAccent">#536DFE</color>
+    <color name="colorPrimaryText">#212121</color>
+    <color name="colorTextPrimary">#FFFFFF</color>
+    <color name="colorButtonNormal">#FFFFFF</color>
+    <color name="colorStartGradient">#8ec5fc</color>
+    <color name="colorEndGradient">#c471f5</color>
+    <color name="colorCalendarBackground">#59000000</color>
+</resources>

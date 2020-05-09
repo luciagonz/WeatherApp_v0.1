@@ -1,0 +1,208 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/widget_margin">
+
+    <androidx.cardview.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/card_view_forecast_weather"
+        style="@style/CardView.Dark"
+        card_view:cardElevation="0dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Forecast in Barcelona"/>
+
+        <!-- Forecast resume -->
+        <LinearLayout
+            android:name="com.fragment.test.TitlesFragment"
+            android:id="@+id/fragmentForecastHome"
+            android:layout_centerHorizontal="true"
+            android:layout_width="fill_parent"
+            android:layout_marginTop="35dp"
+            android:layout_below="@id/fragmentCurrentWeather"
+            android:layout_height="80dp"
+            android:scaleType="fitXY">
+
+            <!-- icons cardview_weather_city -->
+
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5">
+
+                <TextView
+                    android:id="@+id/day1_weather_degrees_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/colorTextPrimary"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:textAlignment="gravity"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="09/05" />
+
+                <TextView
+                    android:id="@+id/day1_weather_icon_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:text="@string/wi_day_sunny_overcast"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="40sp"/>
+
+            </FrameLayout>
+
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+            </Space>
+
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5">
+
+                <TextView
+                    android:id="@+id/day2_weather_degrees_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/colorTextPrimary"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:textAlignment="gravity"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="10/05" />
+
+                <TextView
+                    android:id="@+id/day2_weather_icon_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:text="@string/wi_day_sunny_overcast"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="40sp"/>
+
+            </FrameLayout>
+
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+            </Space>
+
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5">
+
+                <TextView
+                    android:id="@+id/day3_weather_degrees_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/colorTextPrimary"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:textAlignment="gravity"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="11/05" />
+
+                <TextView
+                    android:id="@+id/day3_weather_icon_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:text="@string/wi_day_sunny_overcast"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="40sp"/>
+
+            </FrameLayout>
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+            </Space>
+
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5">
+
+                <TextView
+                    android:id="@+id/day4_weather_degrees_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorTextPrimary"
+                    android:layout_marginBottom="10dp"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:textAlignment="gravity"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="13/05" />
+
+                <TextView
+                    android:id="@+id/day4_weather_icon_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:text="@string/wi_day_sunny_overcast"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="40sp"/>
+
+            </FrameLayout>
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+            </Space>
+
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5">
+
+                <TextView
+                    android:id="@+id/day5_weather_degrees_home"
+                    android:layout_width="match_parent"
+                    android:textColor="@color/colorTextPrimary"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:textAlignment="gravity"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="14/05" />
+
+                <TextView
+                    android:id="@+id/day5_weather_icon_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:text="@string/wi_day_sunny_overcast"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="40sp"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

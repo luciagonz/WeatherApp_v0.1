@@ -1,0 +1,153 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp">
+
+    <!-- Today's wheather -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_current_weather_home"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/CardView.Dark"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp">
+
+        <LinearLayout
+            android:id="@+id/card_current_weather"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:layout_weight="4"
+            android:orientation="horizontal"
+            >
+
+
+            <TextView
+                android:id="@+id/current_weather_icon_home"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:layout_weight="0.4"
+                android:text="@string/wi_day_sunny"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="@color/colorPrimary"
+                android:textSize="80dp"
+                />
+
+            <LinearLayout
+                android:id="@+id/card_current_weather_right_side"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/city_text_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="New York City"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="24sp"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/card_current_weather_right_side_degrees"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/current_degrees_text_home"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textSize="46dp"
+                        android:text="23 ºC"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:textAlignment="gravity"
+                        android:textStyle="bold"
+                        />
+
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginLeft="5dp">
+
+                        <TextView
+                            android:id="@+id/current_min_temp_text_home"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:textAlignment="gravity"
+                            android:text="21ºC"
+                            android:layout_gravity="center_vertical|right"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                            android:textColor="@color/colorTextPrimary"
+                            android:textSize="30sp"
+                            android:textStyle="bold"
+                            />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@color/colorButtonNormal"
+                            android:layout_marginRight="2dp"
+                            android:layout_marginLeft="2dp"/>
+
+
+                        <TextView
+                            android:id="@+id/current_max_temp_text_home"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:textAlignment="gravity"
+                            android:text="29ºC"
+                            android:layout_gravity="center"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                            android:textColor="@color/colorTextPrimary"
+                            android:textSize="30sp"
+                            android:textStyle="bold"
+                            />
+                    </LinearLayout>
+
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/information_priovided"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Data provided by openweathermap.com"
+                    android:gravity="center_vertical|right"
+                    android:textAlignment="gravity"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                    android:textColor="@color/colorTextPrimary"
+                    android:layout_marginRight="10dp"
+                    android:textSize="10sp"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
