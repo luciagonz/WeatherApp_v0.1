@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.appclima.appclimanavigation.R;
+import com.appclima.appclimanavigation.model.Chat;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -37,6 +38,9 @@ public class SpeechRecognition extends MainActivity {
     private VoiceCommands recognisedSpeechReplay; // Selected speech from the array possibilites given by VoiceCommands
     private TextToSpeech voiceCommand; // Replay to the speech given by VoiceCommands class
     private ManagePermissions audioPermission; // Object to manage audioPermissions
+    private String textReplayed;
+    private String textRecognised;
+    private boolean wellRecognised;
 
 
     // Activity and context must be set in the constructor.
@@ -53,7 +57,8 @@ public class SpeechRecognition extends MainActivity {
         // Ensures audio permission is granted:
         audioPermission = new ManagePermissions(myActivity, myContext);
         audioPermission.setPermissionRequest(AUDIO_PERMISSION);
-        audioPermission.checkPermissionEnabled();
+        audioPermission.setRequestCodePermission(AUDIO_PERMISSION_REQUEST_CODE);
+        audioPermission.permissionManager();
 
         System.out.println("audio permission is enabled? " + audioPermission.isPermissionEnabled());
 
@@ -120,15 +125,6 @@ public class SpeechRecognition extends MainActivity {
     // This method handles when speech recogniser intent is on:
     public void HandlerOnActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        // Text to modify with recognised text
-        TextView textSpeech; //To show input Speech
-        System.out.println("textSpeech created");
-        // textSpeech = (TextView) myActivity.findViewById(R.id.recognisedSpeech);
-
-        // textSpeech.setText(Resources.getSystem().getString(R.string.waiting_recognition));
-
-        // System.out.println("textSpeech is " + textSpeech.getText());
-
         // Manage voice commands
         switch (requestCode) {
 
@@ -142,11 +138,6 @@ public class SpeechRecognition extends MainActivity {
                     ArrayList<String> recognisedText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     System.out.println(recognisedText);
 
-                    // Set first recognised text on screen
-                    String textReplay = recognisedText.get(0);
-                    System.out.println(textReplay); // Debug
-                    // textSpeech.setText(textReplay);
-
                     // Call method to manage replay
                     recognisedSpeechReplay.manageReplayAction(recognisedText);
 
@@ -154,11 +145,20 @@ public class SpeechRecognition extends MainActivity {
                     String fragmentDisplayed = recognisedSpeechReplay.getFragmentDisplayed();
                     System.out.println("Fragment Displayed " + fragmentDisplayed);
 
-                    String speechTextReplay = recognisedSpeechReplay.getSpeechReplayed();
-                    System.out.println("Text replay: " + speechTextReplay);
+
+
+                    // Take values from replay and recognisition from Voice Command class in order to print it in the chat:
+                    textReplayed = recognisedSpeechReplay.getSpeechReplayed();
+                    System.out.println("Text replay: " + textReplayed);
+
+                    textRecognised = recognisedSpeechReplay.getSpeechRecognisedAsTrue();
+                    System.out.println(textRecognised);
+
+                    wellRecognised = recognisedSpeechReplay.isSpeechRecognised();
+                    System.out.println("Well recognised?" + wellRecognised);
 
                     // Create Text to Speech in order to give the response:
-                    voiceCommand.speak(speechTextReplay, TextToSpeech.QUEUE_ADD, null);
+                    voiceCommand.speak(textReplayed, TextToSpeech.QUEUE_ADD, null);
 
                     // Change fragment displayed:
                     selectBottomNavigationOption(fragmentDisplayed);
@@ -198,4 +198,27 @@ public class SpeechRecognition extends MainActivity {
         myBottomNavigationView.setSelectedItemId(item);
     }
 
+    public String getTextReplayed() {
+        return textReplayed;
+    }
+
+    public void setTextReplayed(String textReplayed) {
+        this.textReplayed = textReplayed;
+    }
+
+    public String getTextRecognised() {
+        return textRecognised;
+    }
+
+    public void setTextRecognised(String textRecognised) {
+        this.textRecognised = textRecognised;
+    }
+
+    public boolean isWellRecognised() {
+        return wellRecognised;
+    }
+
+    public void setWellRecognised(boolean wellRecognised) {
+        this.wellRecognised = wellRecognised;
+    }
 }

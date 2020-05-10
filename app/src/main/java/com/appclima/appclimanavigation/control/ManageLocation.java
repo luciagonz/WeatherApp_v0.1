@@ -174,8 +174,8 @@ public class ManageLocation extends MainActivity {
 
             System.out.println("Update de location");
             myLocationRequest = LocationRequest.create();
-            myLocationRequest.setInterval(6000);
-            myLocationRequest.setFastestInterval(500);
+            myLocationRequest.setInterval(60000);
+            myLocationRequest.setFastestInterval(5000);
             myLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             myLocationCallback = new LocationCallback() {
                 @Override

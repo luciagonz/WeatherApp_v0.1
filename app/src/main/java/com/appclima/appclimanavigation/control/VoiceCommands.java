@@ -2,12 +2,20 @@ package com.appclima.appclimanavigation.control;
 import android.app.Activity;
 import android.content.Context;
 
+import androidx.fragment.app.FragmentTransaction;
+
+import com.appclima.appclimanavigation.R;
+import com.appclima.appclimanavigation.model.Chat;
+import com.appclima.appclimanavigation.presentation.activities.MainActivity;
+import com.appclima.appclimanavigation.presentation.fragments.VoiceFragment;
+
 import java.util.ArrayList;
 
-public class VoiceCommands {
+public class VoiceCommands extends MainActivity {
     private String speechReplayed;
     private String fragmentDisplayed;
     private ArrayList<String> speechRecognised;
+    private String speechRecognisedAsTrue;
     private boolean isSpeechRecognised;
     private String cityRequest = null;
     private Activity myActivity;
@@ -33,12 +41,15 @@ public class VoiceCommands {
 
         for (int i = 0; i < speechRecognised.size(); i++) {
 
-            System.out.println(speechRecognised.get(i));
+
+            System.out.println("Texto reconocido es: " + speechRecognised.get(i));
+            speechRecognisedAsTrue = speechRecognised.get(i);
 
             // WEATHER QUERIES IN ALL LOCATIONS  TODO : modify preference file in order to get locations
             if (speechRecognised.get(i).contains("weather") & speechRecognised.get(i).contains("in") & speechRecognised.get(i).contains("locations")) {
 
                 if(speechRecognised.get(i).contains("tomorrow")) {
+                    System.out.println(speechRecognisedAsTrue);
                     fragmentDisplayed = "location";
                     speechReplayed = "Weather in your locations for tomorrow are these";
                     isSpeechRecognised = true;
@@ -111,13 +122,12 @@ public class VoiceCommands {
 
                 else {
                     fragmentDisplayed = "home";
-                    speechReplayed = "Weather in your default location is sunny";
+                    speechReplayed = "Here is your home screen with weather information about your cities";
                     isSpeechRecognised = true;
                     break;
                 }
 
             }
-
 
             // DEFAULT LOCATION QUERIES TODO : modify preference file in order to know default location
             else if (speechRecognised.get(i).contains("location")) {
@@ -149,8 +159,8 @@ public class VoiceCommands {
                 }
 
                 else {
-                    fragmentDisplayed = "voice";
-                    speechReplayed = "Sorry, I didn't understand you. Could you please repeat the question?";
+                    fragmentDisplayed = "location";
+                    speechReplayed = "Here is your location screen";
                     isSpeechRecognised = false;
                     continue;
                 }
@@ -173,7 +183,7 @@ public class VoiceCommands {
 
             else if (speechRecognised.get(i).contains("event") || speechRecognised.get(i).contains("events") || speechRecognised.get(i).contains("calendar")) {
 
-                if (speechRecognised.get(i).contains("tell") || speechRecognised.get(i).contains("give") || speechRecognised.get(i).contains("check")) {
+                if (speechRecognised.get(i).contains("tell") || speechRecognised.get(i).contains("give") || speechRecognised.get(i).contains("check")|| speechRecognised.get(i).contains("show")) {
 
                     if (speechRecognised.get(i).contains("tomorrow")) {
                         fragmentDisplayed = "calendar";
@@ -217,31 +227,23 @@ public class VoiceCommands {
                     }
 
                 }
-
                 else {
-                    fragmentDisplayed = "voice";
-                    speechReplayed = "Sorry, I didn't understand you. Could you please repeat the question?";
+                    fragmentDisplayed = "calendar";
+                    speechReplayed = "Here is your calendar with current events!";
                     isSpeechRecognised = false;
                     continue;
                 }
-
             }
 
             // UNKNOWN QUERY
 
             else {
-
                 fragmentDisplayed = "voice";
-                speechReplayed = "Sorry, I didn't understand you. Could you please repeat the question?";
+                speechReplayed = "Sorry, I didn't understand you, could you please repeat the question?";
                 isSpeechRecognised = false;
                 continue;
             }
-
         }
-
-        System.out.println(speechReplayed);
-        System.out.println(fragmentDisplayed);
-
 
     }
 
@@ -292,12 +294,21 @@ public class VoiceCommands {
         return fragmentDisplayed;
     }
 
+
+
     public void setFragmentDisplayed(String fragmentDisplayed) {
 
         this.fragmentDisplayed = fragmentDisplayed;
 
     }
 
+    public String getSpeechRecognisedAsTrue() {
+        return speechRecognisedAsTrue;
+    }
+
+    public void setSpeechRecognisedAsTrue(String speechRecognisedAsTrue) {
+        this.speechRecognisedAsTrue = speechRecognisedAsTrue;
+    }
 
     public ArrayList<String> getSpeechRecognised() {
         return speechRecognised;
@@ -307,4 +318,11 @@ public class VoiceCommands {
         this.speechRecognised = speechRecognised;
     }
 
+    public boolean isSpeechRecognised() {
+        return isSpeechRecognised;
+    }
+
+    public void setSpeechRecognised(boolean speechRecognised) {
+        isSpeechRecognised = speechRecognised;
+    }
 }

@@ -7,11 +7,15 @@ public class CalendarEvents {
     private String startHourEvent;
     private String endHourEvent;
 
-    public CalendarEvents(String titleEvent, String locationEvent, String startHourEvent, String endHourEvent) {
+
+    private String eventDate;
+
+    public CalendarEvents(String titleEvent, String locationEvent, String startHourEvent, String endHourEvent, String eventDate) {
         this.titleEvent = titleEvent;
         this.locationEvent = locationEvent;
         this.startHourEvent = startHourEvent;
         this.endHourEvent = endHourEvent;
+        this.eventDate = eventDate;
     }
 
     public String getTitleEvent() {
@@ -44,5 +48,13 @@ public class CalendarEvents {
 
     public void setEndHourEvent(String endHourEvent) {
         this.endHourEvent = endHourEvent;
+    }
+
+    public String getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(String eventDate) {
+        this.eventDate = eventDate;
     }
 }

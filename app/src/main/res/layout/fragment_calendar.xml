@@ -25,6 +25,7 @@
             app:fontFamily="@font/poppins_light" />
 
         <CalendarView
+            android:id="@+id/calendar_view_widget"
             android:layout_width="fill_parent"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="20dp"
@@ -37,13 +38,5 @@
             android:theme="@style/CalenderViewCustom"
             android:dateTextAppearance="@style/CalenderViewDateCustomText"
             android:weekDayTextAppearance="@style/CalenderViewWeekCustomText"/>
-
-
-
-
-
-
     </LinearLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,26 +30,6 @@ public class CalendarEventCard extends RecyclerView.Adapter<CalendarEventCard.Ca
         this.calendarEventsList = calendarEventsList;
     }
 
-    @NonNull
-
-    @Override
-    public CalendarEventCardHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // When a card is created:
-        View eventCardView = LayoutInflater.from(context).inflate(R.layout.cardview_calendar_event, parent, false);
-        return new CalendarEventCardHolder(eventCardView);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull CalendarEventCardHolder holder, int position) {
-
-    }
-
-    @Override
-    public int getItemCount() {
-
-        return calendarEventsList.size();
-    }
-
 
     // Set values to objects in the cardview:
 
@@ -70,5 +50,33 @@ public class CalendarEventCard extends RecyclerView.Adapter<CalendarEventCard.Ca
             locationEvent = (TextView) itemView.findViewById(R.id.place_event_cv);
         }
     }
+
+    @NonNull
+
+    @Override
+    public CalendarEventCardHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // When a card is created:
+        View eventCardView = LayoutInflater.from(context).inflate(R.layout.cardview_calendar_event, parent, false);
+        return new CalendarEventCardHolder(eventCardView);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull CalendarEventCardHolder holder, int position) {
+        CalendarEvents myEvent = calendarEventsList.get(position);
+        holder.titleEvent.setText(myEvent.getTitleEvent());
+        holder.locationEvent.setText(myEvent.getLocationEvent());
+        holder.startHourEvent.setText(myEvent.getStartHourEvent());
+        holder.endHourEvent.setText(myEvent.getEndHourEvent());
+
+    }
+
+    @Override
+    public int getItemCount() {
+
+        return calendarEventsList.size();
+    }
+
+
+
 }
 

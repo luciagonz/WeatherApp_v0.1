@@ -20,6 +20,7 @@
         android:onClick="getInputSpeech"
         app:layout_constraintBottom_toBottomOf="@id/nav_view"
         app:backgroundTint="@color/colorPrimaryDark"
+        android:id="@+id/floating_button_voice"
         app:maxImageSize="30dp"
         app:fabSize="normal"
         android:scaleType="center"

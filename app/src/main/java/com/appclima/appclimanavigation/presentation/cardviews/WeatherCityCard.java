@@ -87,22 +87,6 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
         }
 
 
-        /*
-
-        switch (locationTypeInt) {
-            case 1: // Show GPS location
-                holder.locationTypeDrawable.setImageResource(R.drawable.location_type_1_gps);
-                System.out.println("GPS icon set");
-            case 2:
-                holder.locationTypeDrawable.setImageResource(R.drawable.location_type_2_default);
-                System.out.println("Default icon set");
-            default:
-                holder.locationTypeDrawable.setImageResource(R.drawable.location_type_3_fav);
-                System.out.println("Fav icon set");
-                break;
-
-
-        } */
 
         // TODO: Place getters from City forecast information (depending on API responses, define data architecture):
 
@@ -211,12 +195,6 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
 
             // Drawable location type:
             locationTypeDrawable = (ImageView) itemView.findViewById(R.id.city_location_type);
-
-
-
-
-
-
 
         }
     }
