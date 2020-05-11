@@ -1,24 +1,60 @@
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/background_chat_message_received"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
-    android:layout_marginLeft="20dp"
-    android:padding="@dimen/widget_margin">
+    android:layout_width="match_parent"
+    android:id="@+id/lineal_layout_chat"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="wrap_content"
+        android:id="@+id/box_message_user"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center|right"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="120dp"
+        android:padding="@dimen/widget_margin">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
             android:layout_gravity="center_horizontal"
             android:id="@+id/chat_message_text_received"
-            android:textAlignment="center"
-            android:textColor="@color/colorTextPrimary"
-            android:text="Text from user"
-            android:layout_marginBottom="10dp">
+            android:gravity="left"
+            android:textAlignment="gravity"
+            android:textColor="@color/colorPrimaryText"
+            android:text="Text from user jsisdijsadsadasda sdadsa  sdasdasd sadads sadasd asdasdsadasd "
+            android:layout_marginBottom="5dp">
         </TextView>
-</RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="wrap_content"
+        android:id="@+id/box_message_voice"
+        android:layout_gravity="center|left"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="120dp"
+        android:padding="@dimen/widget_margin">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:gravity="left"
+            android:textAlignment="gravity"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/chat_message_text_sent"
+            android:textColor="@color/colorTextPrimary"
+            android:text="Text from user jssadsdasdasdsadisddasdasdasdsasdasdsaijasd "
+            android:layout_marginBottom="5dp">
+        </TextView>
+    </LinearLayout>
+</LinearLayout>

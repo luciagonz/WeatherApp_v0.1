@@ -1,25 +1,18 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/background_chat_message_sent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
-    android:layout_marginRight="20dp"
-    android:layout_gravity="right"
-    android:padding="@dimen/widget_margin">
-    <TextView
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/cardview_message_box"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <Button
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
+        android:background="@drawable/background_chat_message_sent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/chat_message_text_sent"
-        android:textAlignment="center"
-        android:textColor="@color/colorTextPrimary"
-        android:text="Text from user"
-        android:layout_marginBottom="10dp">
-    </TextView>
+        android:id="@+id/chat_message_sent"
+        android:text="Hello how are you?"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:padding="@dimen/widget_margin">
+    </Button>
+
 </RelativeLayout>

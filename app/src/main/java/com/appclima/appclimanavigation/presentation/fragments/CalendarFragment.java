@@ -39,7 +39,7 @@ public class CalendarFragment extends Fragment {
                 // Format date used in all project: yyyy/mm/dd
                 String selectedDate = String.valueOf(year) + "/" + String.valueOf(month) + "/" + String.valueOf(dayOfMonth);
 
-                Log.d("Listener Calendar: ", selectedDate); // Debug purpose
+                Log.d("Listener Calendar: ", selectedDate); // Debug purpose,
 
 
                 // TODO: In case user change date, events for this day should be display:

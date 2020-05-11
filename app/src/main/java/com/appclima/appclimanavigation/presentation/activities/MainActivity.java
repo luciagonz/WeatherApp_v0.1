@@ -3,35 +3,33 @@ package com.appclima.appclimanavigation.presentation.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.speech.tts.Voice;
 import android.util.Log;
 import android.view.View;
 
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.control.ManageLocation;
 import com.appclima.appclimanavigation.control.ManagePermissions;
+import com.appclima.appclimanavigation.control.ManagePreferences;
 import com.appclima.appclimanavigation.control.SpeechRecognition;
 import com.appclima.appclimanavigation.control.VoiceCommands;
 import com.appclima.appclimanavigation.model.CalendarEvents;
 import com.appclima.appclimanavigation.model.Chat;
 import com.appclima.appclimanavigation.model.Cities;
-import com.appclima.appclimanavigation.presentation.fragments.VoiceFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,23 +63,23 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<CalendarEvents> calendarEventsArray;
     public ArrayList<Chat> voiceMessages;
 
+    // Important information about cities, not from API, but for control the application (preferences):
+    public List<String> cityListNames;
+    public List<Integer> cityListType;
+
 
     // To provide methods to other classes:
     private static MainActivity instance;
 
 
-    // Buttons and alarms:
+    // Manage preferences:
+    private ManagePreferences myPreferences;
 
-    // Initialize Speech Recognition when microphone is clicked
+    // Method to initialize Speech Recognition when microphone is clicked
     public void getInputSpeech(View view) {
-        System.out.println("Cantidad de chats antes" + voiceMessages.size());
         System.out.println("Click in input speech");
 
         speechRecognition.speechRequest(view, voiceCommands);
-
-        System.out.println(voiceCommands.getFragmentDisplayed());
-
-        System.out.println("Cantidad de chats despues" + voiceMessages.size());
 
     }
 
@@ -173,6 +171,24 @@ public class MainActivity extends AppCompatActivity {
 
 
         // TODO 1 STEP: Recover data from preferences storage
+        // Create new object to manage user's preferences and pass the context:
+        myPreferences = new ManagePreferences(this);
+        // Save preferences //TODO: Delete (not here, debug purpose)
+        myPreferences.savePreferences("Cities", "default", "Paris", 3);
+        myPreferences.savePreferences("Cities", "favourites", "London , Madrid , Barcelona", 3);
+
+
+        // Get favourites cities, convert String to list and save them into CityList.
+        String favouritesCities = myPreferences.getPreferences("Cities","favourites");
+        List<String> cityListNamesFavourites = new ArrayList<String>(Arrays.asList(favouritesCities.split(" , ")));
+        Log.d("Favourite cities " + cityListNamesFavourites.size(), cityListNamesFavourites.toString());
+
+        // TODO: Save them in cityNameList.
+
+        // Get default location city and add it to preferences.
+        String defaultCity = myPreferences.getPreferences("Cities", "default");
+        Log.d("Default location ", defaultCity);
+
 
 
 
@@ -238,13 +254,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // locationService.pauseLocationUpdates();
+        locationService.pauseLocationUpdates();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // locationService.restartLocationUpdates();
+        locationService.restartLocationUpdates();
     }
 
 

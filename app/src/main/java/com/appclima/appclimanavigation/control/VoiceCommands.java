@@ -161,7 +161,7 @@ public class VoiceCommands extends MainActivity {
                 else {
                     fragmentDisplayed = "location";
                     speechReplayed = "Here is your location screen";
-                    isSpeechRecognised = false;
+                    isSpeechRecognised = true;
                     continue;
                 }
 
@@ -181,7 +181,7 @@ public class VoiceCommands extends MainActivity {
 
             // CALENDAR QUERIES
 
-            else if (speechRecognised.get(i).contains("event") || speechRecognised.get(i).contains("events") || speechRecognised.get(i).contains("calendar")) {
+            else if (speechRecognised.get(i).contains("event") || speechRecognised.get(i).contains("calendar") || speechRecognised.get(i).contains("meeting")|| speechRecognised.get(i).contains("appointment")) {
 
                 if (speechRecognised.get(i).contains("tell") || speechRecognised.get(i).contains("give") || speechRecognised.get(i).contains("check")|| speechRecognised.get(i).contains("show")) {
 
@@ -230,7 +230,7 @@ public class VoiceCommands extends MainActivity {
                 else {
                     fragmentDisplayed = "calendar";
                     speechReplayed = "Here is your calendar with current events!";
-                    isSpeechRecognised = false;
+                    isSpeechRecognised = true;
                     continue;
                 }
             }

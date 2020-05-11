@@ -2,8 +2,8 @@ package com.appclima.appclimanavigation.model;
 
 public class Chat {
 
-    private String messageDetected;
-    private Integer transmitter;
+    private String messageDetected; // message displayed
+    private Integer transmitter; // 0 for voice assistant, 1 for user
 
     public Chat(String messageDetected, Integer transmitter) {
         this.messageDetected = messageDetected;

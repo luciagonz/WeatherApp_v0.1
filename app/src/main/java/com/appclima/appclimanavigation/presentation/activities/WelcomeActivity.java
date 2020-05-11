@@ -2,7 +2,9 @@ package com.appclima.appclimanavigation.presentation.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
@@ -27,7 +29,6 @@ public class WelcomeActivity extends AppCompatActivity {
         // Define new icon
         font_icons = new Font_icons();
 
-
         // Importa el icono del path definido en strings.xml (iconFontPath)
         // Para el texto llamado icon en la vista MainActivity.xml
         ((TextView) findViewById(R.id.icon)).setTypeface(font_icons.get_icons(
@@ -42,8 +43,5 @@ public class WelcomeActivity extends AppCompatActivity {
                 finish();
             }
         }, WELCOME_SCREEN_TIME_OUT);
-
-
-
     }
 }

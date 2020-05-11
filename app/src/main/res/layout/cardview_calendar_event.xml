@@ -82,14 +82,13 @@
 
             </LinearLayout>
 
-            <Button
-                style="@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
-                android:layout_width="100dp"
+            <ImageView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|right"
-                android:layout_marginRight="10dp"
-                android:text="Discard"
-                android:textColor="@color/colorPrimaryDark" />
+                android:src="@drawable/ic_visibility_off"
+                android:layout_marginRight="40dp"/>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
