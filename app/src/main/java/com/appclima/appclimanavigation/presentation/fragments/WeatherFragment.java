@@ -10,13 +10,13 @@ import androidx.fragment.app.Fragment;
 
 import com.appclima.appclimanavigation.R;
 
-public class LocationFragment extends Fragment {
+public class WeatherFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         // Set the fragment view
-        final View root = inflater.inflate(R.layout.fragment_location, container, false);
+        final View root = inflater.inflate(R.layout.fragment_weather, container, false);
 
         return root;
     }

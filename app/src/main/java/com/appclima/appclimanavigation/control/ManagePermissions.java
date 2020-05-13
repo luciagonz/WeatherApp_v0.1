@@ -1,6 +1,5 @@
 package com.appclima.appclimanavigation.control;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -11,10 +10,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
-import com.appclima.appclimanavigation.presentation.fragments.CalendarFragment;
-import com.appclima.appclimanavigation.presentation.fragments.LocationFragment;
-import com.appclima.appclimanavigation.presentation.fragments.UserFragment;
-import com.appclima.appclimanavigation.presentation.fragments.VoiceFragment;
 
 
 public class ManagePermissions extends MainActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -34,7 +29,10 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
 
 
     // Check if are granted or not, and ask for them if are not:
-    public void permissionManager() {
+    public void permissionManager(String permission, int request_code) {
+
+        setPermissionRequest(permission);
+        setRequestCodePermission(request_code);
 
         if (ActivityCompat.checkSelfPermission(myContext, permissionRequest) == PackageManager.PERMISSION_GRANTED) {
             permissionEnabled = true;
@@ -57,7 +55,7 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
 
         switch (requestCode){
             case LOCATION_FINE_PERMISSION_REQUEST_CODE:
-                System.out.println("Location request");
+                System.out.println("Location fine request");
                 if (ContextCompat.checkSelfPermission(myContext, LOCATION_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(myContext, "Location fine granted", Toast.LENGTH_LONG).show();
                 } else {
@@ -77,7 +75,7 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
                 break;
 
             case LOCATION_COARSE_PERMISSION_REQUEST_CODE:
-                System.out.println("Audio request");
+                System.out.println("Location coarse request");
                 if (ContextCompat.checkSelfPermission(myContext, LOCATION_COARSE_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(myContext, "Location coarse granted", Toast.LENGTH_LONG).show();
 
@@ -88,7 +86,7 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
                 break;
 
             case READ_CALENDAR_PERMISSION_REQUEST_CODE:
-                System.out.println("Audio request");
+                System.out.println("Read calendar request");
                 if (ContextCompat.checkSelfPermission(myContext, READ_CALENDAR_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(myContext, "Calendar read granted", Toast.LENGTH_LONG).show();
 
@@ -99,13 +97,24 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
                 break;
 
             case WRITE_CALENDAR_PERMISSION_REQUEST_CODE:
-                System.out.println("Audio request");
+                System.out.println("Write calendar request");
                 if (ContextCompat.checkSelfPermission(myContext, WRITE_CALENDAR_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(myContext, "Calendar write granted", Toast.LENGTH_LONG).show();
 
                 } else {
 
                     Toast.makeText(myContext, "Calendar write denied", Toast.LENGTH_LONG).show();
+                }
+                break;
+
+            case INTERNET_NETWORK_STATE_REQUEST_CODE:
+                System.out.println("Network request");
+                if (ContextCompat.checkSelfPermission(myContext, INTERNET_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(myContext, "Network state granted", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    Toast.makeText(myContext, "Network state denied", Toast.LENGTH_LONG).show();
                 }
                 break;
         }

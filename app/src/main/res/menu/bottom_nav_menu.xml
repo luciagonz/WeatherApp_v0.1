@@ -7,9 +7,9 @@
         android:title="@string/title_home" />
 
     <item
-        android:id="@+id/navigation_location"
-        android:icon="@drawable/ic_my_location"
-        android:title="@string/title_location" />
+        android:id="@+id/navigation_weather"
+        android:icon="@drawable/ic_weather"
+        android:title="@string/title_weather" />
 
     <item
         android:id="@+id/navigation_voice"

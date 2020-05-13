@@ -17,10 +17,10 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_location"
-        android:name="com.appclima.appclimanavigation.presentation.fragments.LocationFragment"
-        android:label="@string/title_location"
-        tools:layout="@layout/fragment_location" />
+        android:id="@+id/navigation_weather"
+        android:name="com.appclima.appclimanavigation.presentation.fragments.WeatherFragment"
+        android:label="@string/title_weather"
+        tools:layout="@layout/fragment_weather" />
 
     <fragment
         android:id="@+id/navigation_user"

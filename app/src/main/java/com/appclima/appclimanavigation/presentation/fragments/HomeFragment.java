@@ -126,17 +126,7 @@ public class HomeFragment extends Fragment {
     }
 
 
-    // TODO: maybe it should be done in API class
 
-    private Integer findSymbolbyName(String weatherSymbolName) {
-
-        String packageName = getContext().getPackageName();
-
-        Integer identifierSymbol = getResources().getIdentifier(weatherSymbolName, "string", packageName);
-        System.out.println(identifierSymbol);
-
-        return identifierSymbol;
-    }
 
     private void getCardInformation() {
         cityList = myActivity.getCityListArray();

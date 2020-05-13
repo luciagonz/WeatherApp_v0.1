@@ -4,17 +4,551 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_user"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="HOLITA HOLA"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        style="@style/CardView.Dark"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp"
+            android:orientation="vertical">
+            <!-- Title -->
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@color/colorPrimaryOpacity"
+                android:text="SETTINGS"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+
+
+            <!-- Separator -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:background="@color/colorPrimaryOpacity"
+                android:layout_height="4dp"/>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stackFromBottom="true"
+                android:transcriptMode="alwaysScroll"
+                android:fadeScrollbars="false"
+                style="@style/AppTheme.ScrollBarChat">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="60dp"
+                    android:orientation="vertical">
+
+                    <!-- User profile -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="USERNAME"
+                                android:layout_marginTop="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Lucía"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+                        </LinearLayout>
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_gravity="center"
+                            android:id="@+id/username_edit"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_edit"/>
+                    </LinearLayout>
+
+                    <!-- Separator -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:background="@color/colorPrimaryOpacity"
+                        android:layout_height="1dp"/>
+
+                    <!-- Default location -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="DEFAULT LOCATION"
+                                android:layout_marginTop="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Barcelona"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+                        </LinearLayout>
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:id="@+id/default_location_edit"
+                            android:layout_marginRight="10dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_edit"/>
+                    </LinearLayout>
+
+                    <!-- Separator -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:background="@color/colorPrimaryOpacity"
+                        android:layout_height="1dp"/>
+
+
+                    <!-- Temperature unit -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="TEMPERATURE UNIT"
+                                android:layout_marginTop="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ºC"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+                        </LinearLayout>
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_marginRight="10dp"
+                            android:layout_gravity="center"
+                            android:id="@+id/temperature_unit_edit"
+                            android:src="@drawable/ic_edit"/>
+                    </LinearLayout>
+
+                    <!-- Separator -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:background="@color/colorPrimaryOpacity"
+                        android:layout_height="1dp"/>
+
+                    <!-- Wind unit -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="WIND UNIT"
+                                android:layout_marginTop="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="km/h"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+                        </LinearLayout>
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:id="@+id/wind_unit_edit"
+                            android:layout_gravity="center"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_edit"/>
+                    </LinearLayout>
+
+                    <!-- Separator -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:background="@color/colorPrimaryOpacity"
+                        android:layout_height="1dp"/>
+
+
+                    <!-- Location settings -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="LOCATION UPDATES"
+                                android:layout_marginTop="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="If you enable it, your location will be updated in real time. Your battery may be affected."
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginRight="20dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+                        </LinearLayout>
+                        <Switch
+                            android:id="@+id/switch_location_updates"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="center"
+                            android:theme="@style/SwitchPrefences"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+
+                    <!-- Separator -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:background="@color/colorPrimaryOpacity"
+                        android:layout_height="1dp"/>
+
+                    <!-- Theme -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:gravity="center_vertical|left"
+                                android:text="THEME"
+                                android:textAlignment="gravity"
+                                android:textColor="@color/colorTextPrimary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Dark"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginRight="20dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+                        </LinearLayout>
+                        <Switch
+                            android:id="@+id/switch_theme"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="center"
+                            android:theme="@style/SwitchPrefences"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+
+                    <!-- Separator -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:background="@color/colorPrimaryOpacity"
+                        android:layout_height="1dp"/>
+
+
+                    <!-- Notifications -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:gravity="center_vertical|left"
+                                android:text="UMBRELLA REMINDER"
+                                android:textAlignment="gravity"
+                                android:textColor="@color/colorTextPrimary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Precipitation alerts when rain or snow are expected in your default location."
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginRight="20dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+                        </LinearLayout>
+                        <Switch
+                            android:id="@+id/switch_theme"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="center"
+                            android:theme="@style/SwitchPrefences"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+
+                    <!-- Separator -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:background="@color/colorPrimaryOpacity"
+                        android:layout_height="1dp"/>
+
+                    <!-- Calendar - start of the week -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="CALENDAR START OF THE WEEK"
+                                android:layout_marginTop="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Sunday"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+                        </LinearLayout>
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:id="@+id/day_of_week_calendar_edit"
+                            android:layout_gravity="center"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/ic_edit"/>
+                    </LinearLayout>
+
+                    <!-- Separator -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:background="@color/colorPrimaryOpacity"
+                        android:layout_height="1dp"/>
+
+                    <!-- Temperature unit -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="VOICE COMMANDS"
+                                android:layout_marginTop="5dp"
+                                android:gravity="center_vertical|left"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Problems with your requests? Learn how to use your voice assistant!"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="center_vertical|left"
+                                android:layout_marginRight="20dp"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textAlignment="gravity"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+
+            <!-- Separator -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimaryOpacity"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- GPS location -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GPS LOCATION"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center_vertical|left"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textAlignment="gravity"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Coordinates"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center_vertical|left"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textAlignment="gravity"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Separator -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:background="@color/colorPrimaryOpacity"
+                android:layout_height="1dp"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

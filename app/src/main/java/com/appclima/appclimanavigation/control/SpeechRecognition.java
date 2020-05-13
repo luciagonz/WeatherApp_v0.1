@@ -4,17 +4,14 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
 import com.appclima.appclimanavigation.R;
-import com.appclima.appclimanavigation.model.Chat;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -56,9 +53,7 @@ public class SpeechRecognition extends MainActivity {
         this.recognisedSpeechReplay = voiceCommands;
         // Ensures audio permission is granted:
         audioPermission = new ManagePermissions(myActivity, myContext);
-        audioPermission.setPermissionRequest(AUDIO_PERMISSION);
-        audioPermission.setRequestCodePermission(AUDIO_PERMISSION_REQUEST_CODE);
-        audioPermission.permissionManager();
+        audioPermission.permissionManager(AUDIO_PERMISSION, AUDIO_PERMISSION_REQUEST_CODE);
 
         System.out.println("audio permission is enabled? " + audioPermission.isPermissionEnabled());
 
@@ -117,7 +112,7 @@ public class SpeechRecognition extends MainActivity {
 
         // If audio permission is not granted, request it to the user:
         else {
-            audioPermission.permissionManager();
+            audioPermission.permissionManager(AUDIO_PERMISSION, AUDIO_PERMISSION_REQUEST_CODE);
         }
     }
 
@@ -146,8 +141,7 @@ public class SpeechRecognition extends MainActivity {
                     System.out.println("Fragment Displayed " + fragmentDisplayed);
 
 
-
-                    // Take values from replay and recognisition from Voice Command class in order to print it in the chat:
+                    // Take values from replay and recognition from Voice Command class in order to print it on the chat:
                     textReplayed = recognisedSpeechReplay.getSpeechReplayed();
                     System.out.println("Text replay: " + textReplayed);
 
@@ -184,7 +178,7 @@ public class SpeechRecognition extends MainActivity {
                 item = R.id.navigation_home;
                 break;
             case "location":
-                item = R.id.navigation_location;
+                item = R.id.navigation_weather;
                 break;
             case "calendar":
                 item = R.id.navigation_calendar;

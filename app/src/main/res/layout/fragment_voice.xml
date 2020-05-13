@@ -39,7 +39,7 @@
             android:stackFromBottom="true"
             android:transcriptMode="alwaysScroll"
             android:fadeScrollbars="false"
-            style="@style/scrollbarstyle">
+            style="@style/AppTheme.ScrollBarChat">
 
         <LinearLayout
             android:layout_width="fill_parent"

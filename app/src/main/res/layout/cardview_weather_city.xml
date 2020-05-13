@@ -101,8 +101,8 @@
                             android:layout_weight="1"
                             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                             android:textColor="@color/colorTextPrimary"
-                            android:textSize="46dp"
-                            android:text="23 ºC"
+                            android:textSize="30dp"
+                            android:text="234.3F"
                             android:layout_centerInParent="true"
                             android:gravity="center"
                             android:textAlignment="gravity"
@@ -125,11 +125,11 @@
                                 android:gravity="center"
                                 android:layout_weight="1"
                                 android:textAlignment="gravity"
-                                android:text="21ºC"
+                                android:text="213.3F"
                                 android:layout_gravity="center_vertical|right"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                                 android:textColor="@color/colorTextPrimary"
-                                android:textSize="30sp"
+                                android:textSize="20sp"
                                 android:textStyle="bold"
                                 />
 
@@ -148,11 +148,11 @@
                                 android:gravity="center"
                                 android:layout_weight="1"
                                 android:textAlignment="gravity"
-                                android:text="29ºC"
+                                android:text="293.FC"
                                 android:layout_gravity="center"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                                 android:textColor="@color/colorTextPrimary"
-                                android:textSize="30sp"
+                                android:textSize="20sp"
                                 android:textStyle="bold"
                                 />
                         </LinearLayout>
@@ -162,7 +162,8 @@
                         android:id="@+id/information_priovided"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Data provided by openweathermap.com"
+                        android:text="Provided by openweathermap.com"
+                        android:layout_marginTop="10dp"
                         android:gravity="center_vertical|right"
                         android:textAlignment="gravity"
                         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
@@ -181,7 +182,6 @@
                 android:layout_gravity="center"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextPrimary"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@color/colorPrimaryOpacity"
                 android:text="Forecast weather"/>
@@ -436,7 +436,18 @@
 
                 </LinearLayout>
             </GridLayout>
-
+            <TextView
+                android:id="@+id/temperature_unit_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorTextPrimary"
+                android:layout_gravity="center_vertical|right"
+                android:textAlignment="gravity"
+                android:textSize="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="right"
+                android:singleLine="true"
+                android:text="Temperature unit: ºF" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

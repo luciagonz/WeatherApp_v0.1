@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.appclima.appclimanavigation.R;
+import com.appclima.appclimanavigation.control.APIWeather;
 import com.appclima.appclimanavigation.control.ManageLocation;
 import com.appclima.appclimanavigation.control.ManagePermissions;
 import com.appclima.appclimanavigation.control.ManagePreferences;
@@ -15,6 +16,7 @@ import com.appclima.appclimanavigation.control.VoiceCommands;
 import com.appclima.appclimanavigation.model.CalendarEvents;
 import com.appclima.appclimanavigation.model.Chat;
 import com.appclima.appclimanavigation.model.Cities;
+import com.appclima.appclimanavigation.model.ForecastCity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -33,10 +35,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-
     // Voice recognition objects
     private SpeechRecognition speechRecognition;
     private VoiceCommands voiceCommands;
+
+    //API Weather
+    private APIWeather apiWeather;
 
     // Location service
     private ManageLocation locationService;
@@ -50,22 +54,24 @@ public class MainActivity extends AppCompatActivity {
     public static final String LOCATION_COARSE_PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION;
     public static final String WRITE_CALENDAR_PERMISSION = Manifest.permission.WRITE_CALENDAR;
     public static final String READ_CALENDAR_PERMISSION = Manifest.permission.READ_CALENDAR;
+    public static final String INTERNET_NETWORK_STATE = Manifest.permission.ACCESS_NETWORK_STATE;
 
     public static final int AUDIO_PERMISSION_REQUEST_CODE = 1;
     public static final int LOCATION_FINE_PERMISSION_REQUEST_CODE = 2;
     public static final int LOCATION_COARSE_PERMISSION_REQUEST_CODE = 3;
     public static final int WRITE_CALENDAR_PERMISSION_REQUEST_CODE = 4;
     public static final int READ_CALENDAR_PERMISSION_REQUEST_CODE = 5;
-
+    public static final int INTERNET_NETWORK_STATE_REQUEST_CODE = 6;
 
     // Model Array data:
     public ArrayList<Cities> cityListArray;
+    public ArrayList<ForecastCity> cityForecastListArray;
     public ArrayList<CalendarEvents> calendarEventsArray;
     public ArrayList<Chat> voiceMessages;
 
     // Important information about cities, not from API, but for control the application (preferences):
-    public List<String> cityListNames;
-    public List<Integer> cityListType;
+    public List<String> cityNames;
+    public List<Integer> cityTypes;
 
 
     // To provide methods to other classes:
@@ -74,15 +80,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Manage preferences:
     private ManagePreferences myPreferences;
-
-    // Method to initialize Speech Recognition when microphone is clicked
-    public void getInputSpeech(View view) {
-        System.out.println("Click in input speech");
-
-        speechRecognition.speechRequest(view, voiceCommands);
-
-    }
-
 
     // ACTIVITY CYCLE LIFE METHODS:
     @Override
@@ -99,122 +96,59 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_calendar, R.id.navigation_location, R.id.navigation_user)
+                R.id.navigation_home, R.id.navigation_calendar, R.id.navigation_weather, R.id.navigation_user)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        // Check permissions
-        permissionRequestManager = new ManagePermissions(this, this);
+        // Check if permissions are granted:
+        checkPermissions();
 
-        // Location fine:
-        permissionRequestManager.setPermissionRequest(LOCATION_PERMISSION);
-        permissionRequestManager.setRequestCodePermission(LOCATION_FINE_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager();
-
-        // Location coarse:
-        permissionRequestManager.setPermissionRequest(LOCATION_COARSE_PERMISSION);
-        permissionRequestManager.setRequestCodePermission(LOCATION_COARSE_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager();
-
-        // Audio:
-        permissionRequestManager.setPermissionRequest(AUDIO_PERMISSION);
-        permissionRequestManager.setRequestCodePermission(AUDIO_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager();
-
-        // Calendar write:
-        permissionRequestManager.setPermissionRequest(WRITE_CALENDAR_PERMISSION);
-        permissionRequestManager.setRequestCodePermission(WRITE_CALENDAR_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager();
-
-        // Calendar write:
-        permissionRequestManager.setPermissionRequest(READ_CALENDAR_PERMISSION);
-        permissionRequestManager.setRequestCodePermission(READ_CALENDAR_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager();
+        // Initialize main services:
+        initializeLocation(); // location service
+        speechRecognition = new SpeechRecognition(this, this); // voice recognition service
+        voiceCommands = new VoiceCommands(this, this, locationService); // voice commands and answers
 
 
-        // Creates object to access to the location:
-        myFusedLocationClient = new FusedLocationProviderClient(this);
-        myFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        System.out.println(myFusedLocationClient);
-        locationService = new ManageLocation(this, this, myFusedLocationClient);
-
-        // Get last location coordinates in order to check GPS and get last location updated
-        locationService.getMyLastCoordinates();
-
-        // Enable LocationUpdates if are enabled in user preferences
-        locationService.setEnableLocationUpdates(userPreferencesLocationUpdateEnabled);
-
-        locationService.setLocationUpdates();
-        locationService.locationSettings();
-
-        // Creates speech recognition:
-        speechRecognition = new SpeechRecognition(this, this);
-        voiceCommands = new VoiceCommands(this, this, locationService);
-
-
-        /* TODO: Pasos para agregar o quitar informacion:
-                - On create: archivo de preferencias + localización
-                - Llamadas de voz o botones: añadir nuevas al array de elementos.
-         */
-
-
-
-        // Declare array from models:
-        cityListArray = new ArrayList<>();
-        calendarEventsArray = new ArrayList<>();
+        // INITIALIZE ARRAY MODELS AND FIRST INFORMATION SHOWED:
+        // Initialize CHAT:
         voiceMessages = new ArrayList<>();
-
         Chat message1 = new Chat("Welcome to your voice assistant, I'm here to help you", 0);
         voiceMessages.add(message1);
 
 
-        // TODO 1 STEP: Recover data from preferences storage
+        // Initialize CITIES:
+        cityListArray = new ArrayList<>();
         // Create new object to manage user's preferences and pass the context:
         myPreferences = new ManagePreferences(this);
-        // Save preferences //TODO: Delete (not here, debug purpose)
-        myPreferences.savePreferences("Cities", "default", "Paris", 3);
-        myPreferences.savePreferences("Cities", "favourites", "London , Madrid , Barcelona", 3);
+        // TODO: Debug purpose (delete)
+        myPreferences.savePreferences("UserPrefs", "citiesNames", "London,Rome,Barcelona,Zaragoza", 3);
+        myPreferences.savePreferences("UserPrefs", "citiesTypes", "2,3,3,3", 3);
+
+        // Access to arrayLists with information about cities (names and type):
+        String citiesNames = myPreferences.getPreferences("UserPrefs","citiesNames");
+        cityNames = Arrays.asList(citiesNames.split(","));
+        Log.d("Preferences name cities", cityNames.toString());
+
+        String citiesTypes = myPreferences.getPreferences("UserPrefs","citiesTypes");
+        List<String> cityTypesString = Arrays.asList(citiesTypes.split(","));
+        Log.d("Preferences name cities", cityTypesString.toString());
+        cityTypes = new ArrayList<>();
+        cityForecastListArray = new ArrayList<>();
+
+        for(int i = 0; i < cityNames.size(); i++){cityTypes.add(Integer.parseInt(cityTypesString.get(i)));}
+
+        // Call method to get information about API (cities are valid because they came directly from preference file).
+        updateDataAPI(cityNames, cityTypes, true);
 
 
-        // Get favourites cities, convert String to list and save them into CityList.
-        String favouritesCities = myPreferences.getPreferences("Cities","favourites");
-        List<String> cityListNamesFavourites = new ArrayList<String>(Arrays.asList(favouritesCities.split(" , ")));
-        Log.d("Favourite cities " + cityListNamesFavourites.size(), cityListNamesFavourites.toString());
-
-        // TODO: Save them in cityNameList.
-
-        // Get default location city and add it to preferences.
-        String defaultCity = myPreferences.getPreferences("Cities", "default");
-        Log.d("Default location ", defaultCity);
-
-
-
-
-        // TODO 2 STEP: Get city from location
-
-
-
-        // TODO 3 STEP: Connect with the API in order to get weather information
-
-
-        // Before implementation:
-        Cities city1 = new Cities("Barcelona", "Spain", 23.3, 29.3, 21.3, R.string.wi_cloudy, 1);
-        Cities city2 = new Cities("Barcelona", "Spain", 23.3, 29.3, 21.3, R.string.wi_cloudy, 1);
-        Cities city3 = new Cities("Barcelona", "Spain", 23.3, 29.3, 21.3, R.string.wi_cloudy, 1);
-
-
-        cityListArray.add(city1);
-        cityListArray.add(city2);
-        cityListArray.add(city3);
-
-
+        // Initialize CALENDAR:
+        calendarEventsArray = new ArrayList<>();
+        // TODO: Calendar Provider not implemented yet, events added manually:
         CalendarEvents event1 = new CalendarEvents("Comida Juan", "Maremagnum", "12:00", "13:00", "2020/05/14");
         CalendarEvents event2 = new CalendarEvents("Entrega trabajo", "Racó", "19:00", "20:00", "2020/05/14");
         CalendarEvents event3 = new CalendarEvents("Paseo en bici", "Barcelona", "22:00", "23:00", "2020/05/14");
-
-
         calendarEventsArray.add(event1);
         calendarEventsArray.add(event2);
         calendarEventsArray.add(event3);
@@ -264,11 +198,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    public static MainActivity getInstance() {
-        return instance;
-    }
-
     public void addCityInformation(Cities cityObject) {
         // TODO
     }
@@ -284,6 +213,72 @@ public class MainActivity extends AppCompatActivity {
         voiceMessages.add(new Chat(textMessage, transmitter));
     }
 
+    // Method to initialize Speech Recognition when microphone is clicked
+    public void getInputSpeech(View view) {
+        System.out.println("Click in input speech");
+
+        speechRecognition.speechRequest(view, voiceCommands);
+
+    }
+
+    // Method to check all permissions needed
+    private void checkPermissions() {
+        // Check permissions
+        permissionRequestManager = new ManagePermissions(this, this);
+
+        // Request permissions:
+        permissionRequestManager.permissionManager(LOCATION_PERMISSION, LOCATION_FINE_PERMISSION_REQUEST_CODE);
+        permissionRequestManager.permissionManager(LOCATION_COARSE_PERMISSION, LOCATION_COARSE_PERMISSION_REQUEST_CODE);
+        permissionRequestManager.permissionManager(AUDIO_PERMISSION, AUDIO_PERMISSION_REQUEST_CODE);
+        permissionRequestManager.permissionManager(WRITE_CALENDAR_PERMISSION, WRITE_CALENDAR_PERMISSION_REQUEST_CODE);
+        permissionRequestManager.permissionManager(READ_CALENDAR_PERMISSION, READ_CALENDAR_PERMISSION_REQUEST_CODE);
+        permissionRequestManager.permissionManager(INTERNET_NETWORK_STATE, INTERNET_NETWORK_STATE_REQUEST_CODE);
+
+    }
+
+    // Method to initialize location updates:
+    private void initializeLocation(){
+        // Creates object to access to the location:
+        myFusedLocationClient = new FusedLocationProviderClient(this);
+        myFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        System.out.println(myFusedLocationClient);
+        locationService = new ManageLocation(this, this, myFusedLocationClient);
+
+        // Get last location coordinates in order to check GPS and get last location updated
+        locationService.getMyLastCoordinates();
+        System.out.println(locationService.getMyLatitude() + "  " + locationService.getMyLongitude());
+
+        // Enable LocationUpdates if are enabled in user preferences
+        locationService.setEnableLocationUpdates(userPreferencesLocationUpdateEnabled);
+
+        locationService.setLocationUpdates();
+        locationService.locationSettings();
+    }
+
+    // Update information from API given a list of city names and city types (location, default and favs identifiers):
+    private void updateDataAPI(List<String> names, List<Integer> types, boolean citiesValidated){
+
+        for(int i = 0; i < names.size(); i++){
+            Log.d("City: ", names.get(i) +  " type " + types.get(i));
+
+            // Create object to request weather from each city:
+            apiWeather = new APIWeather(names.get(i), types.get(i), this);
+
+            // Returns true if request is correct:
+            boolean isCityInformationCorrect = apiWeather.manageInformationRequest(citiesValidated);
+
+            // If request is correct, add information to cityListArray:
+            if(isCityInformationCorrect){
+
+                cityListArray.add(apiWeather.getMyCityObject());
+                cityForecastListArray.add(apiWeather.getMyForecastCity());
+                //TODO: FORECAST INFO
+                System.out.println(cityListArray.toString());
+                System.out.println(cityForecastListArray.toString());
+
+            }
+        }
+    }
 
 
     // Getters and setters:
@@ -342,6 +337,8 @@ public class MainActivity extends AppCompatActivity {
     public void setVoiceMessages(ArrayList<Chat> voiceMessages) {
         this.voiceMessages = voiceMessages;
     }
+
+
 }
 
 

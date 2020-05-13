@@ -3,7 +3,7 @@
     <string name="welcome_app">Welcome to My Weather</string>
     <string name="title_home">Home</string>
     <string name="title_calendar">Calendar</string>
-    <string name="title_location">Location</string>
+    <string name="title_weather">Weather</string>
     <string name="title_user">User</string>
     <string name="title_voice">Voice</string>
     <string name="push_to_talk">PUSH TO TALK</string>

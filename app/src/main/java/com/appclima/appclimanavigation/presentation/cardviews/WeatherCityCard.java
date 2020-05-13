@@ -70,9 +70,9 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
         holder.currentsymbolWeather.setText(symbolDirectory);
 
         // Convert double to string before set the value:
-        holder.currentDegrees.setText(String.valueOf(myCity.getCurrentDegrees()));
-        holder.currentmaxDegrees.setText(String.valueOf(myCity.getMaxDegrees()));
-        holder.currentminDegrees.setText(String.valueOf(myCity.getMinDegrees()));
+        holder.currentDegrees.setText(String.valueOf(myCity.getCurrentTemperature()));
+        holder.currentmaxDegrees.setText(String.valueOf(myCity.getMaxTemperature()));
+        holder.currentminDegrees.setText(String.valueOf(myCity.getMinTemperature()));
 
         // Set drawable location according to its locationType:
 
