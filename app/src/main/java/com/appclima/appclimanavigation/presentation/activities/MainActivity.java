@@ -32,6 +32,8 @@ import androidx.navigation.ui.NavigationUI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -272,12 +274,25 @@ public class MainActivity extends AppCompatActivity {
 
                 cityListArray.add(apiWeather.getMyCityObject());
                 cityForecastListArray.add(apiWeather.getMyForecastCity());
-                //TODO: FORECAST INFO
-                System.out.println(cityListArray.toString());
-                System.out.println(cityForecastListArray.toString());
-
             }
         }
+        Log.d("Current weather array: ", String.valueOf(cityListArray.size()));
+        Log.d("Forecast weather array:", String.valueOf(cityForecastListArray.size()));
+
+        /*for(int i = 0; i < cityForecastListArray.size(); i++) {
+            for (int j = 0; j < cityForecastListArray.get(0).getTime_text().size(); j++){
+                if(cityForecastListArray.get(i).getTime_text().get(j).contains("15:00:00")){
+                    System.out.println(cityForecastListArray.get(i).getCity_name_forecast().get(j));
+                    System.out.println(cityForecastListArray.get(i).getTime_text().get(j));
+                    System.out.println(cityForecastListArray.get(i).getWeatherIconID_forecast().get(j));
+                    System.out.println(cityForecastListArray.get(i).getTemp_max_forecast().get(j));
+                    System.out.println(cityForecastListArray.get(i).getTemp_min_forecast().get(j));
+                }
+            }
+        }
+
+         */
+
     }
 
 
@@ -338,7 +353,13 @@ public class MainActivity extends AppCompatActivity {
         this.voiceMessages = voiceMessages;
     }
 
+    public ArrayList<ForecastCity> getCityForecastListArray() {
+        return cityForecastListArray;
+    }
 
+    public void setCityForecastListArray(ArrayList<ForecastCity> cityForecastListArray) {
+        this.cityForecastListArray = cityForecastListArray;
+    }
 }
 
 

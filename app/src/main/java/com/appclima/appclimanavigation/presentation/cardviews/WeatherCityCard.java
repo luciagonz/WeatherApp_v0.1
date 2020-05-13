@@ -19,9 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.model.Cities;
+import com.appclima.appclimanavigation.model.ForecastCity;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
 import com.appclima.appclimanavigation.utilities.Font_icons;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingFormatArgumentException;
 
@@ -32,11 +35,13 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
 
     Context myContext;
     List<Cities> myCityList;
+    List<ForecastCity> myCityForecastList;
 
 
-    public WeatherCityCard(Context context, List<Cities> city) {
+    public WeatherCityCard(Context context, List<Cities> city, List<ForecastCity> cityForecast) {
         this.myContext = context;
         this.myCityList = city;
+        this.myCityForecastList = cityForecast;
 
     }
 
@@ -61,10 +66,32 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
         // CURRENT WEATHER INFORMATION:
         // Update information from City model:
         Cities myCity = myCityList.get(position);
+        ForecastCity myCityForecast = myCityForecastList.get(position);
         System.out.println(position);
 
+        List<String> time_text = new ArrayList<>();
+        List<String> range_temp = new ArrayList<>();
+        List<Integer> icons_ID = new ArrayList<>();
+
+
+        for (int j = 0; j < myCityForecast.getTime_text().size(); j++){
+            if(myCityForecast.getTime_text().get(j).contains("15:00:00")){
+                // Get data without time:
+                String data_text = myCityForecast.getTime_text().get(j).substring(0, myCityForecast.getTime_text().get(j).indexOf(" "));
+                // Get data without year (dd-mm)
+                time_text.add((data_text.split("-")[2]) + "-" + (data_text.split("-")[1]));
+                icons_ID.add(myCityForecast.getWeatherIconID_forecast().get(j));
+                range_temp.add((myCityForecast.getTemp_max_forecast().get(j)).toString());
+            }
+        }
+
+        System.out.println("DATA RECOVER IN FRAGMENT:");
+        System.out.println(time_text);
+        System.out.println(icons_ID);
+        System.out.println(range_temp);
 
         holder.name.setText(myCity.getName());
+        holder.weatherDescription.setText(myCity.getWeatherDescription());
         Integer symbolDirectory = myCity.getSymbolWeatherID();
         // Set icon from id:
         holder.currentsymbolWeather.setText(symbolDirectory);
@@ -86,17 +113,26 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
             holder.locationTypeDrawable.setImageResource(R.drawable.location_type_3_fav);
         }
 
-
-
         // TODO: Place getters from City forecast information (depending on API responses, define data architecture):
 
         // FORECAST WEATHER INFORMATION:
-        holder.symbolWeather_1day.setText(symbolDirectory);
-        holder.symbolWeather_2day.setText(symbolDirectory);
-        holder.symbolWeather_3day.setText(symbolDirectory);
-        holder.symbolWeather_4day.setText(symbolDirectory);
-        holder.symbolWeather_5day.setText(symbolDirectory);
+        holder.symbolWeather_1day.setText(icons_ID.get(0));
+        holder.symbolWeather_2day.setText(icons_ID.get(1));
+        holder.symbolWeather_3day.setText(icons_ID.get(2));
+        holder.symbolWeather_4day.setText(icons_ID.get(3));
+        holder.symbolWeather_5day.setText(icons_ID.get(4));
 
+        holder.date_1day.setText(time_text.get(0));
+        holder.date_2day.setText(time_text.get(1));
+        holder.date_3day.setText(time_text.get(2));
+        holder.date_4day.setText(time_text.get(3));
+        holder.date_5day.setText(time_text.get(4));
+
+        holder.rangeTemperatures_1day.setText(range_temp.get(0));
+        holder.rangeTemperatures_2day.setText(range_temp.get(1));
+        holder.rangeTemperatures_3day.setText(range_temp.get(2));
+        holder.rangeTemperatures_4day.setText(range_temp.get(3));
+        holder.rangeTemperatures_5day.setText(range_temp.get(4));
 
     }
 
@@ -117,6 +153,7 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
         public TextView currentmaxDegrees;
         public TextView currentminDegrees;
         public TextView currentsymbolWeather;
+        public TextView weatherDescription;
 
         // Forecast information:
 
@@ -148,8 +185,6 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
         public ImageView locationTypeDrawable;
 
 
-
-
         // Link every textView label with each atribute:
         public WeatherCityCardHolder(@NonNull View itemView) {
             super(itemView);
@@ -162,6 +197,7 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
             currentmaxDegrees = (TextView) itemView.findViewById(R.id.current_max_temp_text_home);
             currentminDegrees = (TextView) itemView.findViewById(R.id.current_min_temp_text_home);
             currentsymbolWeather = (TextView) itemView.findViewById(R.id.current_weather_icon_home);
+            weatherDescription = (TextView) itemView.findViewById(R.id.weather_description);
 
             // Forecast information
             rangeTemperatures_1day = (TextView) itemView.findViewById(R.id.day1_weather_degrees_range);

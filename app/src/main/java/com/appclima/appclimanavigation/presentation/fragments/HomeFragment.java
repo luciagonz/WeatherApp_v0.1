@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.model.CalendarEvents;
 import com.appclima.appclimanavigation.model.Cities;
+import com.appclima.appclimanavigation.model.ForecastCity;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
 import com.appclima.appclimanavigation.presentation.cardviews.CalendarEventCard;
 import com.appclima.appclimanavigation.presentation.cardviews.WeatherCityCard;
@@ -30,6 +31,7 @@ public class HomeFragment extends Fragment {
 
     RecyclerView recyclerWeatherCards;
     ArrayList<Cities> cityList;
+    ArrayList<ForecastCity> cityForecastList;
     ArrayList<CalendarEvents> calendarEventsList;
     RecyclerView recyclerEventCards;
     MainActivity myActivity;
@@ -85,7 +87,7 @@ public class HomeFragment extends Fragment {
             recyclerWeatherCards.setLayoutManager(layoutManagerWeather);
 
             // Adapt information to cardview
-            WeatherCityCard weatherCityCard = new WeatherCityCard(getContext(), cityList);
+            WeatherCityCard weatherCityCard = new WeatherCityCard(getContext(), cityList, cityForecastList);
 
             recyclerWeatherCards.setAdapter(weatherCityCard);
 
@@ -130,6 +132,7 @@ public class HomeFragment extends Fragment {
 
     private void getCardInformation() {
         cityList = myActivity.getCityListArray();
+        cityForecastList = myActivity.getCityForecastListArray();
         calendarEventsList = myActivity.getCalendarEventsArray();
     }
 }

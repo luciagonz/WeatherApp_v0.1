@@ -11,7 +11,6 @@
         style="@style/CardView.Dark"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp">
 
         <LinearLayout
@@ -34,19 +33,38 @@
                 android:orientation="horizontal"
                 >
 
-
-                <TextView
-                    android:id="@+id/current_weather_icon_home"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="0dp"
                     android:layout_weight="0.4"
-                    android:text="@string/wi_day_sunny"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="80dp"
-                    />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/current_weather_icon_home"
+                        android:layout_width="fill_parent"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/wi_day_sunny"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="80dp"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:id="@+id/weather_description"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorTextPrimary"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="15dp"
+                        android:textAlignment="gravity"
+                        android:layout_marginBottom="10dp"
+                        android:text="sunny and hot"/>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/card_current_weather_right_side"
@@ -205,6 +223,55 @@
                     android:layout_columnWeight="1">
 
                     <TextView
+                        android:id="@+id/day1_weather_degrees_range"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|center_horizontal"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="233/323"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textSize="12dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/day1_weather_icon_home"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/wi_day_sunny_overcast"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="40sp" />
+
+                    <TextView
+                        android:id="@+id/forecast_day1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-10dp"
+                        android:textColor="@color/colorTextPrimary"
+                        android:layout_gravity="top|center_horizontal"
+                        android:textAlignment="gravity"
+                        android:textSize="12dp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="09/05" />
+
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent">
+                </Space>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_columnWeight="1">
+
+                    <TextView
                         android:id="@+id/day2_weather_degrees_range"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -215,7 +282,7 @@
                         android:textStyle="bold"
                         android:gravity="center"
                         android:singleLine="true"
-                        android:text="23/30 (ºC)" />
+                        android:text="233/323" />
 
                     <TextView
                         android:id="@+id/day2_weather_icon_home"
@@ -264,7 +331,7 @@
                         android:textStyle="bold"
                         android:gravity="center"
                         android:singleLine="true"
-                        android:text="23/30 (ºC)" />
+                        android:text="233/323" />
 
                     <TextView
                         android:id="@+id/day3_weather_icon_home"
@@ -287,10 +354,9 @@
                         android:textStyle="bold"
                         android:gravity="center"
                         android:singleLine="true"
-                        android:text="09/05" />
+                        android:text="233/323" />
 
                 </LinearLayout>
-
                 <Space
                     android:layout_width="5dp"
                     android:layout_height="match_parent">
@@ -313,7 +379,7 @@
                         android:textStyle="bold"
                         android:gravity="center"
                         android:singleLine="true"
-                        android:text="23/30 (ºC)" />
+                        android:text="233/323" />
 
                     <TextView
                         android:id="@+id/day4_weather_icon_home"
@@ -361,7 +427,7 @@
                         android:textStyle="bold"
                         android:gravity="center"
                         android:singleLine="true"
-                        android:text="23/30 (ºC)" />
+                        android:text="233/323" />
 
                     <TextView
                         android:id="@+id/day5_weather_icon_home"
@@ -374,54 +440,6 @@
 
                     <TextView
                         android:id="@+id/forecast_day5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="-10dp"
-                        android:textColor="@color/colorTextPrimary"
-                        android:layout_gravity="top|center_horizontal"
-                        android:textAlignment="gravity"
-                        android:textSize="12dp"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:singleLine="true"
-                        android:text="09/05" />
-
-                </LinearLayout>
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="match_parent">
-                </Space>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_columnWeight="1">
-
-                    <TextView
-                        android:id="@+id/day1_weather_degrees_range"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorTextPrimary"
-                        android:layout_gravity="top|center_horizontal"
-                        android:textAlignment="gravity"
-                        android:textSize="12dp"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:singleLine="true"
-                        android:text="23/30 (ºC)" />
-
-                    <TextView
-                        android:id="@+id/day1_weather_icon_home"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/wi_day_sunny_overcast"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="40sp" />
-
-                    <TextView
-                        android:id="@+id/forecast_day1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="-10dp"

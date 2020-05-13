@@ -64,10 +64,11 @@ public class APIWeather extends Activity {
     List<String>  weatherMainInfo_forecast;
     List<String>  weatherDescription_forecast;
     List<Integer>  weatherIconID_forecast;
-
     List<Integer>  clouds_forecast;
     List<Integer>  wind_speed_forecast;
     List<Integer>  degree_wind_forecast;
+    List<String>  city_name_forecast;
+
 
 
     // Constant needed:
@@ -131,7 +132,7 @@ public class APIWeather extends Activity {
                     // 2 PART: FORECAST WEATHER
                     myForecastCity = new ForecastCity(time, time_text, temp_forecast, temp_feels_like_forecast, temp_max_forecast, temp_min_forecast,
                             pressure_forecast, sea_level_forecast, ground_level_forecast, humidity_forecast, weatherMainInfo_forecast,
-                            weatherDescription_forecast, weatherIconID_forecast, clouds_forecast, wind_speed_forecast, degree_wind_forecast);
+                            weatherDescription_forecast, weatherIconID_forecast, clouds_forecast, wind_speed_forecast, degree_wind_forecast, city_name_forecast);
                     return true;
                 }
 
@@ -192,6 +193,8 @@ public class APIWeather extends Activity {
                 // Important: To clearly know how to parse JSON: https://jsonformatter.curiousconcept.com (it's easier, explain in final document!)
 
                 JSONArray dayListArray = weatherDataObject.getJSONArray("list");
+                String cityNameForecast = weatherDataObject.getJSONObject("city").getString("name");
+                System.out.println("city = " + cityNameForecast);
                 Log.d("Forecast array size", String.valueOf(dayListArray.length()));
 
                 // Initialize lists:
@@ -211,6 +214,8 @@ public class APIWeather extends Activity {
                 clouds_forecast = new ArrayList<>();
                 wind_speed_forecast = new ArrayList<>();
                 degree_wind_forecast = new ArrayList<>();
+                city_name_forecast = new ArrayList<>();
+
 
                 // Enter all data in arrayList for each attribute, which contains as many registers as the original array does.
                 for (int i = 0; i < dayListArray.length(); i++) {
@@ -230,6 +235,8 @@ public class APIWeather extends Activity {
                     clouds_forecast.add(dayListArray.getJSONObject(i).getJSONObject("clouds").getInt("all"));
                     wind_speed_forecast.add(dayListArray.getJSONObject(i).getJSONObject("wind").getInt("speed"));
                     degree_wind_forecast.add(dayListArray.getJSONObject(i).getJSONObject("wind").getInt("deg"));
+                    city_name_forecast.add(cityNameForecast);
+
                 }
             }
 
