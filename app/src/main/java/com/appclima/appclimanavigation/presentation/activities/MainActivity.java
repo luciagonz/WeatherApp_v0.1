@@ -197,6 +197,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         locationService.restartLocationUpdates();
+        updateDataAPI(cityNames, cityTypes, true);
+
+
     }
 
 
@@ -259,6 +262,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Update information from API given a list of city names and city types (location, default and favs identifiers):
     private void updateDataAPI(List<String> names, List<Integer> types, boolean citiesValidated){
+
+        cityListArray = new ArrayList<>();
+        cityForecastListArray = new ArrayList<>();
 
         for(int i = 0; i < names.size(); i++){
             Log.d("City: ", names.get(i) +  " type " + types.get(i));

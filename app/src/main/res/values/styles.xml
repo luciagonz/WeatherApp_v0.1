@@ -50,16 +50,14 @@
     </style>
 
     <style name="SwitchPrefences" parent="Theme.AppCompat.Light">
-        <!-- active thumb & track color (30% transparency) -->
         <item name="colorControlActivated">@color/colorPrimaryDark</item>
-
-        <!-- inactive thumb color -->
-        <item name="colorSwitchThumbNormal">#f1f1f1
-        </item>
-
-        <!-- inactive track color (30% transparency) -->
+        <item name="colorSwitchThumbNormal">#f1f1f1 </item>
         <item name="android:colorForeground">@color/colorPrimaryOpacity
         </item>
+    </style>
+
+    <style name="CustomCardviewCalendar" parent="CardView">
+        <item name="cardBackgroundColor">#B4292138</item>
     </style>
 
 

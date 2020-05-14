@@ -118,9 +118,6 @@ public class HomeFragment extends Fragment {
             // ScrollingPagerIndicator recyclerIndicator = myView.findViewById(R.id.indicator_weather_cities_RV);
             // recyclerIndicator.attachToRecyclerView(recyclerWeatherCards);
 
-
-
-
         }
 
 
