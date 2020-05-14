@@ -42,29 +42,29 @@ public class VoiceCommands extends MainActivity {
         for (int i = 0; i < speechRecognised.size(); i++) {
 
 
-            System.out.println("Texto reconocido es: " + speechRecognised.get(i));
+            System.out.println("Recognised speech: " + speechRecognised.get(i));
             speechRecognisedAsTrue = speechRecognised.get(i);
 
-            // WEATHER QUERIES IN ALL LOCATIONS  TODO : modify preference file in order to get locations
+            // WEATHER QUERIES IN ALL LOCATIONS
             if (speechRecognised.get(i).contains("weather") & speechRecognised.get(i).contains("in") & speechRecognised.get(i).contains("locations")) {
 
                 if(speechRecognised.get(i).contains("tomorrow")) {
                     System.out.println(speechRecognisedAsTrue);
-                    fragmentDisplayed = "location";
-                    speechReplayed = "Weather in your locations for tomorrow are these";
+                    fragmentDisplayed = "weather";
+                    speechReplayed = "Weather in your locations for tomorrow are...";
                     isSpeechRecognised = true;
                     break;
                 }
 
                 else if(speechRecognised.get(i).contains("forecast")) {
-                    fragmentDisplayed = "location";
+                    fragmentDisplayed = "weather";
                     speechReplayed = "This is the forecast weather in your locations";
                     isSpeechRecognised = true;
                     break;
                 }
 
                 else {
-                    fragmentDisplayed = "location";
+                    fragmentDisplayed = "weather";
                     speechReplayed = "Weather in your locations are these";
                     isSpeechRecognised = true;
                     break;
@@ -74,18 +74,19 @@ public class VoiceCommands extends MainActivity {
 
 
             // WEATHER QUERIES IN CERTAIN LOCATION
-            else if (speechRecognised.get(i).contains("weather") & speechRecognised.get(i).contains("in")) {
+            else if (speechRecognised.get(i).contains("weather") & speechRecognised.get(i).contains("in") & !speechRecognised.get(i).contains("default")) {
 
                 if(speechRecognised.get(i).contains("tomorrow")) {
-                    fragmentDisplayed = "location";
+                    fragmentDisplayed = "weather";
                     cityRequest = getLocationFromRequest(speechRecognised.get(i), "in");
                     speechReplayed = "Weather in " + cityRequest +  " for tomorrow is sunny";
                     isSpeechRecognised = true;
                     break;
                 }
 
+
                 else if(speechRecognised.get(i).contains("forecast")) {
-                    fragmentDisplayed = "location";
+                    fragmentDisplayed = "weather";
                     cityRequest = getLocationFromRequest(speechRecognised.get(i), "in");
                     speechReplayed = "This is the forecast weather in " + cityRequest;
                     isSpeechRecognised = true;
@@ -93,9 +94,9 @@ public class VoiceCommands extends MainActivity {
                 }
 
                 else {
-                    fragmentDisplayed = "location";
+                    fragmentDisplayed = "weather";
                     cityRequest = getLocationFromRequest(speechRecognised.get(i), "in");
-                    speechReplayed = "Weather in " + cityRequest + "is sunny";
+                    speechReplayed = "Weather in " + cityRequest + "for today is sunny";
                     isSpeechRecognised = true;
                     break;
                 }
@@ -107,29 +108,37 @@ public class VoiceCommands extends MainActivity {
             else if (speechRecognised.get(i).contains("weather")) {
 
                 if(speechRecognised.get(i).contains("tomorrow")) {
-                    fragmentDisplayed = "home";
+                    fragmentDisplayed = "weather";
                     speechReplayed = "Weather in your default location for tomorrow is sunny";
                     isSpeechRecognised = true;
                     break;
                 }
 
+                if(speechRecognised.get(i).contains("today")) {
+                    fragmentDisplayed = "weather";
+                    speechReplayed = "Weather in your default location for today is sunny";
+                    isSpeechRecognised = true;
+                    break;
+                }
+
+
                 else if(speechRecognised.get(i).contains("forecast")) {
-                    fragmentDisplayed = "home";
+                    fragmentDisplayed = "weather";
                     speechReplayed = "This is the forecast weather in your default location";
                     isSpeechRecognised = true;
                     break;
                 }
 
                 else {
-                    fragmentDisplayed = "home";
-                    speechReplayed = "Here is your home screen with weather information about your cities";
+                    fragmentDisplayed = "weather";
+                    speechReplayed = "Here is all the weather information about your cities";
                     isSpeechRecognised = true;
                     break;
                 }
 
             }
 
-            // DEFAULT LOCATION QUERIES TODO : modify preference file in order to know default location
+            // DEFAULT LOCATION QUERIES TODO : read preference file in order to know default location
             else if (speechRecognised.get(i).contains("location")) {
                 if ((speechRecognised.get(i).contains("tell") || speechRecognised.get(i).contains("give") || speechRecognised.get(i).contains("check")) && speechRecognised.get(i).contains("default")) {
                     fragmentDisplayed = "user";
@@ -160,7 +169,7 @@ public class VoiceCommands extends MainActivity {
 
                 else {
                     fragmentDisplayed = "location";
-                    speechReplayed = "Here is your location screen";
+                    speechReplayed = "Here is your setting screen with your location";
                     isSpeechRecognised = true;
                     continue;
                 }
@@ -168,7 +177,7 @@ public class VoiceCommands extends MainActivity {
             }
 
             // TODO: Get location from GPS and get the city or town
-            else if (speechRecognised.get(i).contains("where")) {
+            else if (speechRecognised.get(i).contains("where") || speechRecognised.get(i).contains("place")) {
                 fragmentDisplayed = "location";
                 locationManagerService.getMyLastCoordinates();
                 String myPlace = locationManagerService.getMyPlace();
@@ -180,6 +189,11 @@ public class VoiceCommands extends MainActivity {
 
 
             // CALENDAR QUERIES
+
+            // TODO Extra: Adding weather to the calendar: Asking for the weather forecast for tomorrow should add silently the weather forecast in your calendar as a full day event.
+
+            // TODO Extra: Setting up recurring events: Adding an event should include repetitions
+
 
             else if (speechRecognised.get(i).contains("event") || speechRecognised.get(i).contains("calendar") || speechRecognised.get(i).contains("meeting")|| speechRecognised.get(i).contains("appointment")) {
 
@@ -234,6 +248,8 @@ public class VoiceCommands extends MainActivity {
                     continue;
                 }
             }
+
+
 
             // UNKNOWN QUERY
 

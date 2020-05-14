@@ -137,9 +137,6 @@ public class MainActivity extends AppCompatActivity {
         cityNames = Arrays.asList(citiesNames.split(","));
         Log.d("Preferences name cities", cityNames.toString());
 
-        Chat message2 = new Chat("Your cities: " + citiesNames, 0);
-        voiceMessages.add(message2);
-
         String citiesTypes = myPreferences.getPreferences("UserPrefs","citiesTypes");
         List<String> cityTypesString = Arrays.asList(citiesTypes.split(","));
         Log.d("Preferences name cities", cityTypesString.toString());
@@ -293,20 +290,6 @@ public class MainActivity extends AppCompatActivity {
         }
         Log.d("Current weather array: ", String.valueOf(cityListArray.size()));
         Log.d("Forecast weather array:", String.valueOf(cityForecastListArray.size()));
-
-        /*for(int i = 0; i < cityForecastListArray.size(); i++) {
-            for (int j = 0; j < cityForecastListArray.get(0).getTime_text().size(); j++){
-                if(cityForecastListArray.get(i).getTime_text().get(j).contains("15:00:00")){
-                    System.out.println(cityForecastListArray.get(i).getCity_name_forecast().get(j));
-                    System.out.println(cityForecastListArray.get(i).getTime_text().get(j));
-                    System.out.println(cityForecastListArray.get(i).getWeatherIconID_forecast().get(j));
-                    System.out.println(cityForecastListArray.get(i).getTemp_max_forecast().get(j));
-                    System.out.println(cityForecastListArray.get(i).getTemp_min_forecast().get(j));
-                }
-            }
-        }
-
-         */
 
     }
 

@@ -177,7 +177,7 @@ public class SpeechRecognition extends MainActivity {
             case "home":
                 item = R.id.navigation_home;
                 break;
-            case "location":
+            case "weather":
                 item = R.id.navigation_weather;
                 break;
             case "calendar":

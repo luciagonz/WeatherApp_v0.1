@@ -15,13 +15,6 @@ public class ManagePreferences {
         - Login in the first activity?
      */
 
-    // Access mode will be set using a int value from outside class
-    // MODE_PRIVATE -> 3
-    // MODE_WORLD_READABLE -> 2
-    // MODE_WORLD_WRITEABLE -> 1
-    // MODE_MULTI_PROCESS -> 0
-
-
     // Atributes:
     private String namePreferenceFile;
     private String preferenceID;
