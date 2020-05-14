@@ -117,6 +117,17 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
                     Toast.makeText(myContext, "Network state denied", Toast.LENGTH_LONG).show();
                 }
                 break;
+
+            case INTERNET_PERMISSION_REQUEST_CODE:
+                System.out.println("Internet access request");
+                if (ContextCompat.checkSelfPermission(myContext, INTERNET_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(myContext, "Internet access granted", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    Toast.makeText(myContext, "Internet access denied", Toast.LENGTH_LONG).show();
+                }
+                break;
         }
     }
 

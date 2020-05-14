@@ -45,10 +45,6 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
 
     }
 
-    public WeatherCityCard(List<Cities> myCityList) {
-        this.myCityList = myCityList;
-    }
-
 
     @NonNull
 

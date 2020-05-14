@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String WRITE_CALENDAR_PERMISSION = Manifest.permission.WRITE_CALENDAR;
     public static final String READ_CALENDAR_PERMISSION = Manifest.permission.READ_CALENDAR;
     public static final String INTERNET_NETWORK_STATE = Manifest.permission.ACCESS_NETWORK_STATE;
+    public static final String INTERNET_PERMISSION = Manifest.permission.INTERNET;
 
     public static final int AUDIO_PERMISSION_REQUEST_CODE = 1;
     public static final int LOCATION_FINE_PERMISSION_REQUEST_CODE = 2;
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int WRITE_CALENDAR_PERMISSION_REQUEST_CODE = 4;
     public static final int READ_CALENDAR_PERMISSION_REQUEST_CODE = 5;
     public static final int INTERNET_NETWORK_STATE_REQUEST_CODE = 6;
+    public static final int INTERNET_PERMISSION_REQUEST_CODE = 7;
+
 
     // Model Array data:
     public ArrayList<Cities> cityListArray;
@@ -125,13 +128,17 @@ public class MainActivity extends AppCompatActivity {
         // Create new object to manage user's preferences and pass the context:
         myPreferences = new ManagePreferences(this);
         // TODO: Debug purpose (delete)
-        myPreferences.savePreferences("UserPrefs", "citiesNames", "London,Rome,Barcelona,Zaragoza", 3);
-        myPreferences.savePreferences("UserPrefs", "citiesTypes", "2,3,3,3", 3);
+        myPreferences.savePreferences("UserPrefs", "citiesNames", "Roma,Barcelona,Zaragoza", 3);
+        myPreferences.savePreferences("UserPrefs", "citiesTypes", "2,3,3", 3);
+
 
         // Access to arrayLists with information about cities (names and type):
         String citiesNames = myPreferences.getPreferences("UserPrefs","citiesNames");
         cityNames = Arrays.asList(citiesNames.split(","));
         Log.d("Preferences name cities", cityNames.toString());
+
+        Chat message2 = new Chat("Your cities: " + citiesNames, 0);
+        voiceMessages.add(message2);
 
         String citiesTypes = myPreferences.getPreferences("UserPrefs","citiesTypes");
         List<String> cityTypesString = Arrays.asList(citiesTypes.split(","));
@@ -238,6 +245,8 @@ public class MainActivity extends AppCompatActivity {
         permissionRequestManager.permissionManager(WRITE_CALENDAR_PERMISSION, WRITE_CALENDAR_PERMISSION_REQUEST_CODE);
         permissionRequestManager.permissionManager(READ_CALENDAR_PERMISSION, READ_CALENDAR_PERMISSION_REQUEST_CODE);
         permissionRequestManager.permissionManager(INTERNET_NETWORK_STATE, INTERNET_NETWORK_STATE_REQUEST_CODE);
+        permissionRequestManager.permissionManager(INTERNET_PERMISSION, INTERNET_PERMISSION_REQUEST_CODE);
+
 
     }
 
