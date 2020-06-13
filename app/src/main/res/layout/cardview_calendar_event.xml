@@ -13,6 +13,24 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:id="@+id/all_day_event_icon"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/ic_full_day_event" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All day"
+            android:textSize="10dp"
+            android:id="@+id/all_day_event_text"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="10dp"/>
+
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -50,7 +68,6 @@
 
             </LinearLayout>
 
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,7 +92,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/place_event_cv"
+                    android:id="@+id/description_event_cv"
                     android:gravity="center_vertical|left"
                     android:text="Skype"
                     android:textAlignment="gravity" />
@@ -86,7 +103,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|right"
-                android:src="@drawable/ic_visibility_off"
+                android:id="@+id/icon_location_event_cv"
+                android:src="@drawable/ic_event_location_on"
                 android:layout_marginRight="40dp"/>
 
         </LinearLayout>

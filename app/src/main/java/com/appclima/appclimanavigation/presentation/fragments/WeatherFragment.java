@@ -13,15 +13,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appclima.appclimanavigation.R;
+import com.appclima.appclimanavigation.control.APIWeather;
+import com.appclima.appclimanavigation.control.ManagePreferences;
 import com.appclima.appclimanavigation.model.CalendarEvents;
 import com.appclima.appclimanavigation.model.Cities;
 import com.appclima.appclimanavigation.model.ForecastCity;
+import com.appclima.appclimanavigation.model.MyPrefs;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
 import com.appclima.appclimanavigation.presentation.cardviews.CalendarEventCard;
 import com.appclima.appclimanavigation.presentation.cardviews.WeatherCityCard;
 import com.appclima.appclimanavigation.presentation.cardviews.WeatherScreenCityCard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;
 
@@ -31,6 +36,7 @@ public class WeatherFragment extends Fragment {
     ArrayList<Cities> cityList;
     ArrayList<ForecastCity> cityForecastList;
     MainActivity myActivity;
+    MyPrefs myPreferences;
 
 
     // Empty constructor:
@@ -47,6 +53,17 @@ public class WeatherFragment extends Fragment {
         // this fragments is part of main activity
         myActivity = (MainActivity) getActivity();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (myActivity.isAllowRefresh()) {
+            myActivity.setAllowRefresh(false);
+            System.out.println("Refresh weather fragment");
+            getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+        }
+    }
+
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -95,9 +112,36 @@ public class WeatherFragment extends Fragment {
 
 
     private void getCardInformation() {
-        Log.d("Weather Fragment: ", "Getting information...");
-        cityList = myActivity.getCityListArray();
-        cityForecastList = myActivity.getCityForecastListArray();
+        ManagePreferences managePreferences = new ManagePreferences(getContext());
+
+        // Access to arrayLists with information about cities (names and type):
+        String citiesNames = managePreferences.getPreferences("UserPrefs","citiesNames");
+        List<String> cityListNames = Arrays.asList(citiesNames.split(","));
+        Log.d("Preferences name cities", cityListNames.toString());
+
+        String citiesTypes = managePreferences.getPreferences("UserPrefs","citiesTypes");
+        List<String> cityTypesString = Arrays.asList(citiesTypes.split(","));
+        Log.d("Preferences name cities", cityTypesString.toString());
+
+        cityList = new ArrayList<>();
+        cityForecastList = new ArrayList<>();
+
+        for (int i = 0; i < cityListNames.size(); i++) {
+
+            Log.d("City: ", cityListNames.get(i) +  " type " + cityTypesString.get(i));
+
+            APIWeather apiWeather = new APIWeather(cityListNames.get(i), Integer.valueOf(cityTypesString.get(i)),getContext());
+            boolean isCityInformationCorrect = apiWeather.manageInformationRequest(true);
+
+            if (isCityInformationCorrect) {
+                cityList.add(apiWeather.getMyCityObject());
+                cityForecastList.add(apiWeather.getMyForecastCity());
+            }
+
+        }
+
+        Log.d("Current weather array: ", String.valueOf(cityList.size()));
+        Log.d("Forecast weather array:", String.valueOf(cityForecastList.size()));
     }
 
 }

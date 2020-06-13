@@ -43,11 +43,24 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <Button
+                android:layout_width="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="20dp"
+                android:textStyle="bold"
+                android:layout_gravity="right"
+                android:id="@+id/add_event_calendar_button"
+                android:background="@drawable/ic_add_event_calendar"
+                android:text="+" />
+
+
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="-25dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/colorPrimaryDarkOpacity"
                 android:text="Your appointments for ..."
                 android:id="@+id/title_calendar_events"
                 android:textAlignment="center"

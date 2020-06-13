@@ -16,8 +16,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class APIWeather extends Activity {
 
@@ -69,9 +75,7 @@ public class APIWeather extends Activity {
     List<Integer>  degree_wind_forecast;
     List<String>  city_name_forecast;
 
-
-
-    // Constant needed:
+    // Constants needed:
     private final String API_KEY = "40f93e8b2c5c0dc897458467878b8b6b";
     private final String BASE_URL_CURRENT_WEATHER = "http://api.openweathermap.org/data/2.5/weather?q=";
     private final String BASE_URL_FORECAST_WEATHER = "http://api.openweathermap.org/data/2.5/forecast?q=";
@@ -93,6 +97,11 @@ public class APIWeather extends Activity {
         this.locationType = locationType; // to know if its fav, GPS or default
         this.myContext = myContext;
     }
+
+    public APIWeather(Context myContext) {
+        this.myContext = myContext;
+    }
+
 
 
     public boolean manageInformationRequest(boolean isCityValidated) {
@@ -153,8 +162,31 @@ public class APIWeather extends Activity {
                     stop iterating when validRequest = true (API returns correct values) or when no more word were found
                  */
 
+                // If API request worked fine, add information to ArrayListCurrentWeather:
+                currentWeatherInformation();
+                forecastWeatherInformation();
 
-                return false;
+
+                if (validRequest) {
+
+                    // 1 PART: CURRENT WEATHER
+                    myCityObject = new Cities(longitude,latitude, weatherMainInfo, weatherDescription,
+                            currentTemperature, maxTemperature, minTemperature, feelsTemperature,
+                            pressure, humidity, visibility, windSpeed, windDegrees, clouds, sunrise,
+                            sunset, cityName, country, weatherIconID, locationType);
+
+                    // 2 PART: FORECAST WEATHER
+                    myForecastCity = new ForecastCity(time, time_text, temp_forecast, temp_feels_like_forecast, temp_max_forecast, temp_min_forecast,
+                            pressure_forecast, sea_level_forecast, ground_level_forecast, humidity_forecast, weatherMainInfo_forecast,
+                            weatherDescription_forecast, weatherIconID_forecast, clouds_forecast, wind_speed_forecast, degree_wind_forecast, city_name_forecast);
+                    return true;
+                }
+
+                else {
+                    Toast.makeText(myContext, "Unable to proceed with your request. Please, try again.", Toast.LENGTH_LONG).show();
+                    return false;
+                }
+
             }
         }
     }
@@ -259,6 +291,8 @@ public class APIWeather extends Activity {
             try {
 
                 // Parse data to extract important information from JSON:
+                Integer timezone = weatherDataObject.getInt("timezone");
+                Log.d("TimeZone API: ", timezone.toString());
                 JSONObject coordinates = weatherDataObject.getJSONObject("coord");
                 latitude = coordinates.getDouble("lat");
                 longitude = coordinates.getDouble("lon");
@@ -294,8 +328,9 @@ public class APIWeather extends Activity {
                 Log.d("Clouds info API:", String.valueOf(clouds));
 
                 JSONObject sysInfo = weatherDataObject.getJSONObject("sys");
-                sunrise = sysInfo.getInt("sunrise");
-                sunset = sysInfo.getInt("sunset");
+                // Add timezone to show correct time depending on its location:
+                sunrise = sysInfo.getInt("sunrise") + timezone;
+                sunset = sysInfo.getInt("sunset") + timezone;
                 country = sysInfo.getString("country");
                 Log.d("Sun info API", "Sunrise: " + sunrise + " Sunset: " + sunset);
                 Log.d("Country: ", country);
@@ -411,6 +446,307 @@ public class APIWeather extends Activity {
         }
     }
 
+    // Manage command responses:
+    public String getCurrentTimeDescription() {
+        return weatherDescription;
+    }
+
+    public String getCurrentTemperature() {
+        ManagePreferences managePreferences = new ManagePreferences(myContext);
+        String unitTemperature = managePreferences.getDefaultUnitTemperature();
+        Log.d("Temperature unit: ", "Unit is "+ unitTemperature);
+        String currentTemp;
+
+        if(unitTemperature.contains("C")) {
+            currentTemp = String.format("%.2f", (currentTemperature - 273.15)) + " Celsius degrees";
+
+
+        }
+
+        else if (unitTemperature.contains("F")) {
+            currentTemp =   String.format("%.2f", ((currentTemperature*9/5) - 459.67)) + " Fahrenheit degrees";
+        }
+
+        else { // Kelvin (default in API)
+            currentTemp =   String.format("%.2f", currentTemperature) + " Kelvin degrees";
+
+        }
+
+        return currentTemp;
+    }
+
+    public String getCurrentHumidity() {
+        return  humidity + "%";
+    }
+
+    public Double temperatureUnitMesure (Double absoluteTemperature) {
+
+        ManagePreferences managePreferences = new ManagePreferences(myContext);
+        String unitTemperature = managePreferences.getDefaultUnitTemperature();
+        Double convertedTemperature = 0.00;
+
+
+        if(unitTemperature.contains("C")) {
+            convertedTemperature = (absoluteTemperature - 273.15);
+
+        }
+
+        else if (unitTemperature.contains("F")) {
+            convertedTemperature =   (absoluteTemperature*9/5) - 459.67;
+        }
+
+        else { // Kelvin (default in API)
+            convertedTemperature =   absoluteTemperature;
+
+        }
+        return convertedTemperature;
+    }
+
+
+
+
+   public String getAverageHumidity(Integer relativeDay) {
+
+       Double averageHumidity = 0.00;
+       Integer countHumidityIterations = 0;
+       for(int i = 0; i < time_text.size(); i++) {
+
+           if (getRelativeDayForecast(time_text.get(i)) == relativeDay) {
+               averageHumidity = averageHumidity + humidity_forecast.get(i);
+               countHumidityIterations = countHumidityIterations + 1;
+           }
+
+       }
+
+       if ((averageHumidity == 0) & (relativeDay == 0)) {
+           return getCurrentHumidity();
+       }
+
+       else {
+           return String.format("%.1f",(averageHumidity/countHumidityIterations)) + " %";
+
+       }
+
+   }
+
+   public String getMostCommonTimeDescription(Integer relativeDay) {
+
+       List<String> timeDescriptionDay = new ArrayList<>();
+
+
+       for(int i = 0; i < time_text.size(); i++) {
+
+           if (getRelativeDayForecast(time_text.get(i)) == relativeDay) {
+               timeDescriptionDay.add(weatherDescription_forecast.get(i));
+           }
+       }
+
+       System.out.println(timeDescriptionDay.toString());
+
+       // Search most popular string:
+       Map<String, Integer> stringsCount = new HashMap<>();
+
+       // Count each description iterating over the array (fill the map):
+
+       for(String description: timeDescriptionDay)
+       {
+           Integer count = stringsCount.get(description);
+           if(count == null) count = new Integer(0);
+           count++;
+           stringsCount.put(description,count);
+       }
+
+       // Find most repeated string iterating over the map
+       Map.Entry<String,Integer> mostRepeated = null;
+       for(Map.Entry<String, Integer> e: stringsCount.entrySet())
+       {
+           if(mostRepeated == null || mostRepeated.getValue()<e.getValue())
+               mostRepeated = e;
+       }
+
+       if(mostRepeated != null) {
+           return mostRepeated.getKey();
+       }
+
+       else {
+           return weatherDescription;
+       }
+
+
+   }
+
+    public String getAverageTemperature(Integer relativeDay) {
+
+        ManagePreferences managePreferences = new ManagePreferences(myContext);
+        String unitTemperature = managePreferences.getDefaultUnitTemperature();
+        Log.d("Temperature unit: ", "Unit is "+ unitTemperature);
+
+        Double averageTemperature = 0.00;
+        Integer countTemperatures = 0;
+
+        for(int i = 0; i < time_text.size(); i++) {
+
+            if (getRelativeDayForecast(time_text.get(i)) == relativeDay) {
+                averageTemperature = averageTemperature + temp_forecast.get(i);
+                countTemperatures = countTemperatures + 1;
+            }
+
+        }
+
+        String averageTemperatureString;
+        if ((averageTemperature == 0.00) & (relativeDay == 0)) {
+            averageTemperatureString = getCurrentTemperature();
+        }
+
+        else {
+            averageTemperature = averageTemperature/countTemperatures;
+            Log.d("Average Temperature", String.valueOf(averageTemperature));
+            if(unitTemperature.contains("C")) {
+
+                averageTemperatureString = String.format("%.2f", (averageTemperature - 273.15)) + " Celsius degrees";
+
+
+            }
+
+            else if (unitTemperature.contains("F")) {
+                averageTemperatureString =   String.format("%.2f", ((averageTemperature*9/5) - 459.67)) + " Fahrenheit degrees";
+            }
+
+            else { // Kelvin (default in API)
+                averageTemperatureString =   String.format("%.2f", averageTemperature) + " Kelvin degrees";
+
+            }
+        }
+
+
+        return averageTemperatureString;
+    }
+
+    public String getDayName(Integer relativeDay) {
+
+        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DATE,relativeDay);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        String dayOfWeekName = " ";
+
+        switch (dayOfWeek) {
+            case 1:
+                dayOfWeekName = "Sunday";
+                break;
+            case 2:
+                dayOfWeekName = "Monday";
+                break;
+            case 3:
+                dayOfWeekName = "Tuesday";
+                break;
+            case 4:
+                dayOfWeekName = "Wednesday";
+                break;
+            case 5:
+                dayOfWeekName = "Thursday";
+                break;
+            case 6:
+                dayOfWeekName = "Friday";
+                break;
+            case 7:
+                dayOfWeekName = "Saturday";
+        }
+
+        return dayOfWeekName;
+    }
+
+
+    public Integer getRelativeDayForecast(String date) {
+
+       DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+       Date currentDate = new Date();
+       String day_0 = dateFormat.format(currentDate); // today
+       Calendar calendar = Calendar.getInstance();
+       calendar.setTime(currentDate);
+       calendar.add(Calendar.DATE,1);
+       String day_1 = dateFormat.format(calendar.getTime()); // tomorrow
+       calendar.add(Calendar.DATE,1);
+       String day_2 = dateFormat.format(calendar.getTime());
+       calendar.add(Calendar.DATE,1);
+       String day_3 = dateFormat.format(calendar.getTime());
+       calendar.add(Calendar.DATE,1);
+       String day_4 = dateFormat.format(calendar.getTime());
+       calendar.add(Calendar.DATE,1);
+       String day_5 = dateFormat.format(calendar.getTime());
+       calendar.add(Calendar.DATE,1);
+
+
+       Integer relativeDay;
+
+       if (date.contains(day_0)) {
+           relativeDay = 0;
+       }
+
+       else if (date.contains(day_1)) {
+           relativeDay = 1;
+       }
+
+       else if (date.contains(day_2)) {
+           relativeDay = 2;
+       }
+
+       else if (date.contains(day_3)) {
+           relativeDay = 3;
+       }
+
+       else if (date.contains(day_4)) {
+           relativeDay = 4;
+       }
+
+       else {
+           relativeDay = 5;
+       }
+
+       return relativeDay;
+   }
+
+
+   public ArrayList<Double> averageTemperatureForecast() {
+       ArrayList<Double> temperatureForecast = new ArrayList<>();
+       ArrayList<Double> sumTemperatures = new ArrayList<>();
+       ArrayList<Integer> countTemperatures = new ArrayList<>();
+
+       // Array to storage averages and number of temperatures provided by API
+       for (int i = 0; i < 6; i++) {
+           sumTemperatures.add(0.00);
+           countTemperatures.add(0);
+       }
+
+       // Get all temperatures and added to sum temperatures in each day
+
+       for (int i = 0; i < time_text.size(); i++) {
+
+           // Look the day (time_text.get(i)) and save the temperature added with others to the correct position of th array
+           for (int j = 0; j < 6; j++) {
+               if (getRelativeDayForecast(time_text.get(i)) == j) {
+                   // temperature = previously_temperature + new_temperature
+                   sumTemperatures.set(j, sumTemperatures.get(j) + temp_forecast.get(i));
+                   // count new temperature added:
+                   countTemperatures.set(j, countTemperatures.get(j) + 1);
+               }
+           }
+       }
+
+       for (int j = 0; j < 6; j++) {
+           if ((j == 0) & (sumTemperatures.get(j) == 0)){
+               temperatureForecast.add(temperatureUnitMesure(currentTemperature));
+           }
+           else {
+               temperatureForecast.add(temperatureUnitMesure(sumTemperatures.get(j)/countTemperatures.get(j)));
+           }
+
+       }
+
+       System.out.println(temperatureForecast.toString());
+       return temperatureForecast;
+   }
 
     // Match figures indicated on "icon" element from API with symbols from the font.
     public int getSymbolIdFromFigureName (String figureName) {
@@ -493,6 +829,8 @@ public class APIWeather extends Activity {
         return symbolID;
 
     }
+
+
 
 
     public Cities getMyCityObject() {

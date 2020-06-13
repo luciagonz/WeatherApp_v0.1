@@ -36,8 +36,8 @@ public class ManageLocation extends MainActivity {
     private LocationCallback myLocationCallback;
     private LocationManager myManager;
     private Geocoder myGeocoder;
-    boolean enableLocationUpdates = false;
     private FusedLocationProviderClient myFusedLocationClient;
+    private String cityPlace;
 
 
 
@@ -53,26 +53,29 @@ public class ManageLocation extends MainActivity {
 
 
     public void pauseLocationUpdates() {
-        // stop location updates when Activity is on pause
-        System.out.println("Phone on pause, location update on pause");
+        // stop location updates
         myFusedLocationClient.removeLocationUpdates(myLocationCallback);
     }
 
     public void restartLocationUpdates() {
-        // restart location updates when Activity start again:
-        System.out.println("Phone on pause, location on pause");
+        // restart location updates
         setLocationUpdates();
     }
 
 
-    // TODO: Set a flag in preferences, providing a way to the user to stop the location updating
-    public void resumeLocationFlag() {
-        if(enableLocationUpdates) {
-            // Pause location updates when Activity is no longer active
-            System.out.println("Pause location service client");
-            myFusedLocationClient.requestLocationUpdates(myLocationRequest,
-                    myLocationCallback, null);
+    //
+    public boolean isLocationUpdateEnabled () {
+        ManagePreferences managePreferences = new ManagePreferences(myContext);
+        String locationUpdatesEnabled = managePreferences.getLocationUpdates();
 
+        if (locationUpdatesEnabled.contains("true")) {
+            System.out.println("Location update enabled");
+            return true;
+        }
+
+        else {
+            System.out.println("Location update disabled");
+            return false;
         }
     }
 
@@ -87,14 +90,13 @@ public class ManageLocation extends MainActivity {
             // Get place from coordinates:
             nameLocation = myGeocoder.getFromLocation(latitude, longitude, 1);
             // String address = nameLocation.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-            String city = nameLocation.get(0).getLocality();
+            cityPlace = nameLocation.get(0).getLocality();
             String state = nameLocation.get(0).getAdminArea();
             String country = nameLocation.get(0).getCountryName();
-            // String postalCode = nameLocation.get(0).getPostalCode();
-            // String knownName = nameLocation.get(0).getFeatureName(); // Only if available else return NULL
+
 
             StringBuilder placeString = new StringBuilder();
-            String strLocation [] = {city, " , ", state, " , ", country};
+            String strLocation [] = {cityPlace, " , ", state, " , ", country};
 
             for (String temp: strLocation){
                 // Append only when the string is not null
@@ -137,8 +139,6 @@ public class ManageLocation extends MainActivity {
                     myLongitude = location.getLongitude();
 
                     myPlace = getMyLastLocation(myLatitude, myLongitude);
-                    System.out.println(myPlace);
-                    System.out.println("Longitud: " + myLongitude +"\n Latitud:" + myLatitude);
                 }
 
                 else {
@@ -167,12 +167,9 @@ public class ManageLocation extends MainActivity {
 
 
     public void setLocationUpdates () {
-        if (enableLocationUpdates) {
-            System.out.println("Starting location updates...");
+
+        if (isLocationUpdateEnabled()) {
             // Creates and configure location request:
-
-
-            System.out.println("Update de location");
             myLocationRequest = LocationRequest.create();
             myLocationRequest.setInterval(60000);
             myLocationRequest.setFastestInterval(5000);
@@ -190,12 +187,16 @@ public class ManageLocation extends MainActivity {
                         if (location != null) {
                             //TODO: UI updates.
                             myLocation = location;
-                            System.out.println("Location updated");
                             myLatitude = location.getLatitude();
                             myLongitude = location.getLongitude();
+                            System.out.println("Location updated to " + myLatitude + ", " +  myLongitude);
+
                             myPlace = getMyLastLocation(myLatitude, myLongitude);
-                            System.out.println(myPlace);
-                            System.out.println("Longitud: " + myLongitude + "\n Latitud:" + myLatitude);
+                            System.out.println(cityPlace);
+                            ManagePreferences managePreferences = new ManagePreferences(myContext);
+                            managePreferences.changeLocation(cityPlace, 1);
+
+
                         }
                     }
                 }
@@ -255,12 +256,5 @@ public class ManageLocation extends MainActivity {
         return myLongitude;
     }
 
-    public boolean isEnableLocationUpdates() {
-        return enableLocationUpdates;
-    }
-
-    public void setEnableLocationUpdates(boolean enableLocationUpdates) {
-        this.enableLocationUpdates = enableLocationUpdates;
-    }
 }
 

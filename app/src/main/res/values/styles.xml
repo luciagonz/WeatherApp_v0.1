@@ -60,5 +60,12 @@
         <item name="cardBackgroundColor">#B4292138</item>
     </style>
 
+    <style name="CustomCardviewEvents" parent="CardView">
+        <item name="cardBackgroundColor">#79C57CE4</item>
+    </style>
+
+    <style name="MaterialThemeDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+    </style>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.appclima.appclimanavigation.control;
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.fragment.app.FragmentTransaction;
 
@@ -47,9 +48,10 @@ public class VoiceCommands extends MainActivity {
 
             // WEATHER QUERIES IN ALL LOCATIONS
             if (speechRecognised.get(i).contains("weather") & speechRecognised.get(i).contains("in") & speechRecognised.get(i).contains("locations")) {
+                ManagePreferences managePreferences = new ManagePreferences(myContext);
+                String prefCities = managePreferences.getPreferences("UserPrefs","citiesNames");
 
                 if(speechRecognised.get(i).contains("tomorrow")) {
-                    System.out.println(speechRecognisedAsTrue);
                     fragmentDisplayed = "weather";
                     speechReplayed = "Weather in your locations for tomorrow are...";
                     isSpeechRecognised = true;
@@ -58,7 +60,7 @@ public class VoiceCommands extends MainActivity {
 
                 else if(speechRecognised.get(i).contains("forecast")) {
                     fragmentDisplayed = "weather";
-                    speechReplayed = "This is the forecast weather in your locations";
+                    speechReplayed = "Here is your weather screen with all the information about forecast in your cities: " + prefCities;
                     isSpeechRecognised = true;
                     break;
                 }
@@ -76,27 +78,35 @@ public class VoiceCommands extends MainActivity {
             // WEATHER QUERIES IN CERTAIN LOCATION
             else if (speechRecognised.get(i).contains("weather") & speechRecognised.get(i).contains("in") & !speechRecognised.get(i).contains("default")) {
 
+                cityRequest = getLocationFromRequest(speechRecognised.get(i), "in");
+                fragmentDisplayed = "weather";
+                APIWeather apiWeather = new APIWeather(cityRequest, 3, myContext);
+                apiWeather.manageInformationRequest(false);
+
                 if(speechRecognised.get(i).contains("tomorrow")) {
-                    fragmentDisplayed = "weather";
-                    cityRequest = getLocationFromRequest(speechRecognised.get(i), "in");
-                    speechReplayed = "Weather in " + cityRequest +  " for tomorrow is sunny";
+                    speechReplayed = "Weather in " + cityRequest +  " for tomorrow is " + apiWeather.getMostCommonTimeDescription(1) + ". Average temperature will be " +
+                                    apiWeather.getAverageTemperature(1) + " and " + apiWeather.getAverageHumidity(1) + " humidity.";
                     isSpeechRecognised = true;
                     break;
                 }
 
 
                 else if(speechRecognised.get(i).contains("forecast")) {
-                    fragmentDisplayed = "weather";
-                    cityRequest = getLocationFromRequest(speechRecognised.get(i), "in");
-                    speechReplayed = "This is the forecast weather in " + cityRequest;
+                    apiWeather.averageTemperatureForecast();
+                    speechReplayed = "Today is " + apiWeather.getMostCommonTimeDescription(0) + ",  average temperature " + apiWeather.getAverageTemperature(0) + " and " + apiWeather.getAverageHumidity(0) + " average humidity;  \n" +
+                            apiWeather.getMostCommonTimeDescription(1) + " for tomorrow, average temperature " + apiWeather.getAverageTemperature(1) + " and " + apiWeather.getAverageHumidity(1) + " average humidity; \n" +
+                            apiWeather.getMostCommonTimeDescription(2) + " for " + apiWeather.getDayName(2) + ", average temperature "  + apiWeather.getAverageTemperature(2) + " and " + apiWeather.getAverageHumidity(2) + " average humidity; \n" +
+                            apiWeather.getMostCommonTimeDescription(3) + " for " + apiWeather.getDayName(3) + ", average temperature "  + apiWeather.getAverageTemperature(3) + " and " + apiWeather.getAverageHumidity(3) + " average humidity; \n" +
+                            apiWeather.getMostCommonTimeDescription(4) + " for " + apiWeather.getDayName(4) + ", average temperature "  + apiWeather.getAverageTemperature(4) + " and " + apiWeather.getAverageHumidity(4) + " average humidity.";
+
                     isSpeechRecognised = true;
                     break;
                 }
 
                 else {
-                    fragmentDisplayed = "weather";
-                    cityRequest = getLocationFromRequest(speechRecognised.get(i), "in");
-                    speechReplayed = "Weather in " + cityRequest + "for today is sunny";
+                    speechReplayed = "Current weather in " + cityRequest +  " is " +  apiWeather.getCurrentTimeDescription() + ". Current temperature is " + apiWeather.getCurrentTemperature()
+                                    + " and " + apiWeather.getCurrentHumidity() + " humidity.";
+                    Log.d("SpeechReplayed", speechReplayed);
                     isSpeechRecognised = true;
                     break;
                 }
@@ -104,27 +114,39 @@ public class VoiceCommands extends MainActivity {
             }
 
 
-            // WEATHER QUERIES IN DEFAULT LOCATION TODO : modify preference file in order to get default location
+            // WEATHER QUERIES IN DEFAULT LOCATION
             else if (speechRecognised.get(i).contains("weather")) {
 
+                ManagePreferences managePreferences = new ManagePreferences(myContext);
+                String defaultLocation = managePreferences.getDefaultLocation();
+                fragmentDisplayed = "weather";
+                APIWeather apiWeather = new APIWeather(defaultLocation, 3, myContext);
+                apiWeather.manageInformationRequest(true);
+
                 if(speechRecognised.get(i).contains("tomorrow")) {
-                    fragmentDisplayed = "weather";
-                    speechReplayed = "Weather in your default location for tomorrow is sunny";
+
+                    speechReplayed = "Weather in " + defaultLocation +  " for tomorrow is " + apiWeather.getMostCommonTimeDescription(1) + ". Average temperature will be " +
+                            apiWeather.getAverageTemperature(1) + " and " + apiWeather.getAverageHumidity(1) + " humidity.";
                     isSpeechRecognised = true;
                     break;
                 }
 
                 if(speechRecognised.get(i).contains("today")) {
-                    fragmentDisplayed = "weather";
-                    speechReplayed = "Weather in your default location for today is sunny";
+
+                    speechReplayed = "Current weather in " + defaultLocation +  " is " +  apiWeather.getCurrentTimeDescription() + ". Current temperature is " + apiWeather.getCurrentTemperature()
+                            + " and " + apiWeather.getCurrentHumidity() + " humidity.";
+                    Log.d("SpeechReplayed", speechReplayed);
                     isSpeechRecognised = true;
                     break;
                 }
 
 
                 else if(speechRecognised.get(i).contains("forecast")) {
-                    fragmentDisplayed = "weather";
-                    speechReplayed = "This is the forecast weather in your default location";
+                    speechReplayed = "Today is " + apiWeather.getMostCommonTimeDescription(0) + ",  average temperature " + apiWeather.getAverageTemperature(0) + " and " + apiWeather.getAverageHumidity(0) + " average humidity;  \n" +
+                            apiWeather.getMostCommonTimeDescription(1) + " for tomorrow, average temperature " + apiWeather.getAverageTemperature(1) + " and " + apiWeather.getAverageHumidity(1) + " average humidity; \n" +
+                            apiWeather.getMostCommonTimeDescription(2) + " for " + apiWeather.getDayName(2) + ", average temperature "  + apiWeather.getAverageTemperature(2) + " and " + apiWeather.getAverageHumidity(2) + " average humidity; \n" +
+                            apiWeather.getMostCommonTimeDescription(3) + " for " + apiWeather.getDayName(3) + ", average temperature "  + apiWeather.getAverageTemperature(3) + " and " + apiWeather.getAverageHumidity(3) + " average humidity; \n" +
+                            apiWeather.getMostCommonTimeDescription(4) + " for " + apiWeather.getDayName(4) + ", average temperature "  + apiWeather.getAverageTemperature(4) + " and " + apiWeather.getAverageHumidity(4) + " average humidity.";
                     isSpeechRecognised = true;
                     break;
                 }
@@ -138,11 +160,13 @@ public class VoiceCommands extends MainActivity {
 
             }
 
-            // DEFAULT LOCATION QUERIES TODO : read preference file in order to know default location
+            // DEFAULT LOCATION QUERIES
             else if (speechRecognised.get(i).contains("location")) {
                 if ((speechRecognised.get(i).contains("tell") || speechRecognised.get(i).contains("give") || speechRecognised.get(i).contains("check")) && speechRecognised.get(i).contains("default")) {
+                    ManagePreferences managePreferences = new ManagePreferences(myContext);
+                    String defaultLocation = managePreferences.getDefaultLocation();
                     fragmentDisplayed = "user";
-                    speechReplayed = "This is your default location";
+                    speechReplayed = defaultLocation + " is your default location.";
                     isSpeechRecognised = true;
                     break;
                 }
@@ -158,10 +182,12 @@ public class VoiceCommands extends MainActivity {
                     break;
                 }
 
-
                 else if ((speechRecognised.get(i).contains("change") || speechRecognised.get(i).contains("set")) && speechRecognised.get(i).contains("to")) {
+
                     fragmentDisplayed = "user";
                     cityRequest = getLocationFromRequest(speechRecognised.get(i), "to");
+                    ManagePreferences managePreferences = new ManagePreferences(myContext);
+                    managePreferences.changeLocation(cityRequest, 2);
                     speechReplayed = "Your default location was changed to" + cityRequest;
                     isSpeechRecognised = true;
                     break;
@@ -176,7 +202,6 @@ public class VoiceCommands extends MainActivity {
 
             }
 
-            // TODO: Get location from GPS and get the city or town
             else if (speechRecognised.get(i).contains("where") || speechRecognised.get(i).contains("place")) {
                 fragmentDisplayed = "location";
                 locationManagerService.getMyLastCoordinates();

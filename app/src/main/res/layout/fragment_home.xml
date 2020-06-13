@@ -64,19 +64,29 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:background="@color/colorPrimaryOpacity"
-                android:text="Your appointments for today "
-                android:textAlignment="center"
-                android:textColor="@color/colorTextPrimary"
-                android:textStyle="bold">
+            <Button
+                android:layout_width="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="20dp"
+                android:textStyle="bold"
+                android:layout_gravity="right"
+                android:id="@+id/add_event_calendar_button_home"
+                android:background="@drawable/ic_add_event_calendar"
+                android:text="+" />
 
-            </TextView>
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="-25dp"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/colorPrimaryOpacity"
+                    android:text="Your appointments for today "
+                    android:textAlignment="center"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textStyle="bold"/>
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_events_RV"

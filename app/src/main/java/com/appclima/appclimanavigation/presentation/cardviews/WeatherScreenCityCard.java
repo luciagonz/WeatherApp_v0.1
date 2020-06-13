@@ -13,17 +13,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appclima.appclimanavigation.R;
+import com.appclima.appclimanavigation.control.ManagePreferences;
 import com.appclima.appclimanavigation.model.Cities;
 import com.appclima.appclimanavigation.model.ForecastCity;
+import com.appclima.appclimanavigation.model.MyPrefs;
 
-import org.w3c.dom.Text;
-
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
 
 public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCityCard.WeatherScreenCityCardHolder> {
     Context myContext;
     List<Cities> myCityList;
     List<ForecastCity> myCityForecastList;
+    double currentTemp;
+    double maxTemp;
+    double minTemp;
+    double feelsTemp;
+    double windSpeed;
 
 
     public WeatherScreenCityCard(Context context, List<Cities> city, List<ForecastCity> cityForecast) {
@@ -63,22 +70,82 @@ public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCit
             holder.locationTypeDrawable.setImageResource(R.drawable.location_type_3_fav);
         }
 
+
+        // Temperature depending on units:
+        ManagePreferences myPrefs = new ManagePreferences(myContext);
+
+        String unitTempPrefs = myPrefs.getDefaultUnitTemperature();
+
+        if(unitTempPrefs.contains("C")) {
+            currentTemp =  myCity.getCurrentTemperature() - 273.15;
+            maxTemp = myCity.getMaxTemperature() - 273.15;
+            minTemp = myCity.getMinTemperature() - 273.15;
+            feelsTemp = myCity.getFeelsTemperature() - 273.15;
+        }
+
+        else if (unitTempPrefs.contains("F")) {
+            currentTemp =  (myCity.getCurrentTemperature()*9/5) - 459.67;
+            maxTemp = (myCity.getMaxTemperature()*9/5) - 459.67;
+            minTemp = (myCity.getMinTemperature()*9/5) - 459.67;
+            feelsTemp = (myCity.getFeelsTemperature()*9/5) - 459.67;
+        }
+
+        else { // Kelvin (default in API)
+            currentTemp =  myCity.getCurrentTemperature();
+            maxTemp = myCity.getMaxTemperature();
+            minTemp = myCity.getMinTemperature();
+            feelsTemp = myCity.getFeelsTemperature();
+        }
+
+
+        holder.currentDegrees.setText("Current: " + String.format("%.2f", currentTemp) + " º" + unitTempPrefs);
+        holder.currentMaxDegrees.setText("Max: " + String.format("%.2f", maxTemp) + " º" + unitTempPrefs);
+        holder.currentMinDegrees.setText("Min: " + String.format("%.2f", minTemp) + " º" + unitTempPrefs);
+        holder.currentFeelDegrees.setText("Feels: " + String.format("%.2f", feelsTemp) + " º" + unitTempPrefs);
+
+
+        // Sunrise and sunset time:
+        String hour_sunrise = unixToDate(String.valueOf(myCity.getSunrise()));
+        String hour_sunset = unixToDate(String.valueOf(myCity.getSunset()));
+
+        holder.sunrise.setText("Sunrise: " + hour_sunrise + " h");
+        holder.sunset.setText("Sunset: " + hour_sunset + " h");
+
+        // Wind speed and degrees:
+
+        String windUnitPrefs = myPrefs.getDefaultUnitWind();
+
+        if (windUnitPrefs.contains("km/h")) {
+
+            windSpeed = myCity.getWindSpeed() * 3.6;
+
+        }
+
+        else {
+
+            windSpeed = myCity.getWindSpeed();
+
+        }
+
+        holder.windSpeed.setText("Wind speed: " +  String.format("%.2f", windSpeed) + " " + windUnitPrefs);
+        holder.windDeg.setText("Wind deg: " + myCity.getWindDegrees() + " º");
+
+
+
+        // Weather description and symbols involved:
         holder.weatherDescription.setText(myCity.getWeatherDescription());
         holder.currentSymbolWeather.setText(myCity.getSymbolWeatherID());
         holder.thermometerWeather.setText(R.string.wi_thermometer);
-        holder.currentDegrees.setText("Current: " + myCity.getCurrentTemperature());
-        holder.currentMaxDegrees.setText("Max: " + myCity.getMaxTemperature());
-        holder.currentMinDegrees.setText("Min: " + myCity.getMinTemperature());
-        holder.currentFeelDegrees.setText("Feels: " + myCity.getFeelsTemperature());
 
-        holder.sunrise.setText("Sunrise: " + myCity.getSunrise());
-        holder.sunset.setText("Sunset: " + myCity.getSunset());
+        // Coordinates:
+        holder.coordinatesCity.setText("Lat: " + myCity.getLatitude() + " Long: " + myCity.getLongitude());
+
+
         holder.clouds.setText("Clouds: " + myCity.getClouds());
-        holder.visibility.setText("Visibility: " + myCity.getVisibility());
-        holder.pressure.setText("Pressure: " + myCity.getPressure());
-        holder.humidity.setText("Humidity: " + myCity.getHumidity());
-        holder.windSpeed.setText("Wind speed: " + String.valueOf(myCity.getWindSpeed()));
-        holder.windDeg.setText("Wind deg: " + String.valueOf(myCity.getWindDegrees()));
+        holder.visibility.setText("Visibility: " + myCity.getVisibility()/1000 + " km");
+        holder.pressure.setText("Pressure: " + myCity.getPressure() + " hPa");
+        holder.humidity.setText("Humidity: " + myCity.getHumidity() + " %");
+
 
 
     }
@@ -152,5 +219,15 @@ public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCit
             currentSymbolWeather.setTypeface(font);
             thermometerWeather.setTypeface(font);
         }
+    }
+
+    private String unixToDate(String unix_timestamp) {
+        long timestamp = Long.parseLong(unix_timestamp) * 1000;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("H:mm");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        String date = simpleDateFormat.format(timestamp);
+
+        return date.toString();
     }
 }

@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.control.APIWeather;
+import com.appclima.appclimanavigation.control.ManageCalendar;
 import com.appclima.appclimanavigation.control.ManageLocation;
 import com.appclima.appclimanavigation.control.ManagePermissions;
 import com.appclima.appclimanavigation.control.ManagePreferences;
@@ -16,7 +17,6 @@ import com.appclima.appclimanavigation.control.VoiceCommands;
 import com.appclima.appclimanavigation.model.CalendarEvents;
 import com.appclima.appclimanavigation.model.Chat;
 import com.appclima.appclimanavigation.model.Cities;
-import com.appclima.appclimanavigation.model.ForecastCity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -29,11 +29,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     // Location service
     private ManageLocation locationService;
     private FusedLocationProviderClient myFusedLocationClient;
-    private boolean userPreferencesLocationUpdateEnabled = true; // TODO: Leer fichero de preferencias para saber si las tiene habilitadas
 
     // Required permissions and request codes defined:
     private ManagePermissions permissionRequestManager;
@@ -67,24 +65,17 @@ public class MainActivity extends AppCompatActivity {
     public static final int INTERNET_NETWORK_STATE_REQUEST_CODE = 6;
     public static final int INTERNET_PERMISSION_REQUEST_CODE = 7;
 
+    // Manage calendar
+    private boolean allowRefresh;
+
 
     // Model Array data:
-    public ArrayList<Cities> cityListArray;
-    public ArrayList<ForecastCity> cityForecastListArray;
     public ArrayList<CalendarEvents> calendarEventsArray;
     public ArrayList<Chat> voiceMessages;
-
-    // Important information about cities, not from API, but for control the application (preferences):
-    public List<String> cityNames;
-    public List<Integer> cityTypes;
 
 
     // To provide methods to other classes:
     private static MainActivity instance;
-
-
-    // Manage preferences:
-    private ManagePreferences myPreferences;
 
     // ACTIVITY CYCLE LIFE METHODS:
     @Override
@@ -93,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Hide title bar
         getSupportActionBar().hide();
+        allowRefresh = false;
 
         // Set activity main view
         setContentView(R.layout.activity_main);
@@ -122,42 +114,6 @@ public class MainActivity extends AppCompatActivity {
         Chat message1 = new Chat("Welcome to your voice assistant, I'm here to help you", 0);
         voiceMessages.add(message1);
 
-
-        // Initialize CITIES:
-        cityListArray = new ArrayList<>();
-        // Create new object to manage user's preferences and pass the context:
-        myPreferences = new ManagePreferences(this);
-        // TODO: Debug purpose (delete)
-        myPreferences.savePreferences("UserPrefs", "citiesNames", "Roma,Barcelona,Zaragoza", 3);
-        myPreferences.savePreferences("UserPrefs", "citiesTypes", "2,3,3", 3);
-
-
-        // Access to arrayLists with information about cities (names and type):
-        String citiesNames = myPreferences.getPreferences("UserPrefs","citiesNames");
-        cityNames = Arrays.asList(citiesNames.split(","));
-        Log.d("Preferences name cities", cityNames.toString());
-
-        String citiesTypes = myPreferences.getPreferences("UserPrefs","citiesTypes");
-        List<String> cityTypesString = Arrays.asList(citiesTypes.split(","));
-        Log.d("Preferences name cities", cityTypesString.toString());
-        cityTypes = new ArrayList<>();
-        cityForecastListArray = new ArrayList<>();
-
-        for(int i = 0; i < cityNames.size(); i++){cityTypes.add(Integer.parseInt(cityTypesString.get(i)));}
-
-        // Call method to get information about API (cities are valid because they came directly from preference file).
-        updateDataAPI(cityNames, cityTypes, true);
-
-
-        // Initialize CALENDAR:
-        calendarEventsArray = new ArrayList<>();
-        // TODO: Calendar Provider not implemented yet, events added manually:
-        CalendarEvents event1 = new CalendarEvents("Comida Juan", "Maremagnum", "12:00", "13:00", "2020/05/14");
-        CalendarEvents event2 = new CalendarEvents("Entrega trabajo", "Racó", "19:00", "20:00", "2020/05/14");
-        CalendarEvents event3 = new CalendarEvents("Paseo en bici", "Barcelona", "22:00", "23:00", "2020/05/14");
-        calendarEventsArray.add(event1);
-        calendarEventsArray.add(event2);
-        calendarEventsArray.add(event3);
 
     }
 
@@ -191,21 +147,41 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public String getCoordinates(){
+        locationService.getMyLastCoordinates();
+        return (locationService.getMyLatitude() + " ," + locationService.getMyLongitude());
+    }
+
+    public void restartLocationUpdates () {
+        ManagePreferences managePreferences = new ManagePreferences(this);
+        if (managePreferences.getLocationUpdates().contains("true")){
+            locationService.restartLocationUpdates();
+
+        }
+    }
+
+    public void pauseLocationUpdates() {
+        ManagePreferences managePreferences = new ManagePreferences(this);
+        if (managePreferences.getLocationUpdates().contains("true")){
+            locationService.pauseLocationUpdates();
+
+        }
+    }
     @Override
     protected void onPause() {
         super.onPause();
-        locationService.pauseLocationUpdates();
+        if (!allowRefresh){
+            System.out.println("Fragment udpate " + allowRefresh);
+            allowRefresh = true;
+        }
+        pauseLocationUpdates();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        locationService.restartLocationUpdates();
-        updateDataAPI(cityNames, cityTypes, true);
-
-
+        restartLocationUpdates();
     }
-
 
     public void addCityInformation(Cities cityObject) {
         // TODO
@@ -214,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
     public void addEventCalendar(CalendarEvents eventObject) {
         // TODO
     }
+
 
     public void addChatMessage(String textMessage, Integer transmitter) {
         // Adding new message
@@ -248,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Method to initialize location updates:
-    private void initializeLocation(){
+    public void initializeLocation(){
         // Creates object to access to the location:
         myFusedLocationClient = new FusedLocationProviderClient(this);
         myFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -260,38 +237,10 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(locationService.getMyLatitude() + "  " + locationService.getMyLongitude());
 
         // Enable LocationUpdates if are enabled in user preferences
-        locationService.setEnableLocationUpdates(userPreferencesLocationUpdateEnabled);
-
         locationService.setLocationUpdates();
         locationService.locationSettings();
     }
 
-    // Update information from API given a list of city names and city types (location, default and favs identifiers):
-    private void updateDataAPI(List<String> names, List<Integer> types, boolean citiesValidated){
-
-        cityListArray = new ArrayList<>();
-        cityForecastListArray = new ArrayList<>();
-
-        for(int i = 0; i < names.size(); i++){
-            Log.d("City: ", names.get(i) +  " type " + types.get(i));
-
-            // Create object to request weather from each city:
-            apiWeather = new APIWeather(names.get(i), types.get(i), this);
-
-            // Returns true if request is correct:
-            boolean isCityInformationCorrect = apiWeather.manageInformationRequest(citiesValidated);
-
-            // If request is correct, add information to cityListArray:
-            if(isCityInformationCorrect){
-
-                cityListArray.add(apiWeather.getMyCityObject());
-                cityForecastListArray.add(apiWeather.getMyForecastCity());
-            }
-        }
-        Log.d("Current weather array: ", String.valueOf(cityListArray.size()));
-        Log.d("Forecast weather array:", String.valueOf(cityForecastListArray.size()));
-
-    }
 
 
     // Getters and setters:
@@ -327,13 +276,7 @@ public class MainActivity extends AppCompatActivity {
         this.permissionRequestManager = permissionRequest;
     }
 
-    public ArrayList<Cities> getCityListArray() {
-        return cityListArray;
-    }
 
-    public void setCityListArray(ArrayList<Cities> cityListArray) {
-        this.cityListArray = cityListArray;
-    }
 
     public ArrayList<CalendarEvents> getCalendarEventsArray() {
         return calendarEventsArray;
@@ -351,14 +294,15 @@ public class MainActivity extends AppCompatActivity {
         this.voiceMessages = voiceMessages;
     }
 
-    public ArrayList<ForecastCity> getCityForecastListArray() {
-        return cityForecastListArray;
+    public boolean isAllowRefresh() {
+        return allowRefresh;
     }
 
-    public void setCityForecastListArray(ArrayList<ForecastCity> cityForecastListArray) {
-        this.cityForecastListArray = cityForecastListArray;
+    public void setAllowRefresh(boolean allowRefresh) {
+        this.allowRefresh = allowRefresh;
     }
 }
+
 
 
 
