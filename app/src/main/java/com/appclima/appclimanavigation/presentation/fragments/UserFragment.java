@@ -120,6 +120,7 @@ public class UserFragment extends Fragment {
 
 
     private void changeSwitch(Switch listenerSwitch, final Integer switchType) {
+
         listenerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

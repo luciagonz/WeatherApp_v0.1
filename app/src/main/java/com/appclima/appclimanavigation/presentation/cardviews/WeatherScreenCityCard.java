@@ -1,7 +1,12 @@
 package com.appclima.appclimanavigation.presentation.cardviews;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,16 +15,36 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.control.ManagePreferences;
 import com.appclima.appclimanavigation.model.Cities;
 import com.appclima.appclimanavigation.model.ForecastCity;
-import com.appclima.appclimanavigation.model.MyPrefs;
+import com.appclima.appclimanavigation.presentation.activities.MainActivity;
+import com.appclima.appclimanavigation.utilities.TemperatureMarkerView;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.MarkerView;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.Utils;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCityCard.WeatherScreenCityCardHolder> {
@@ -31,13 +56,17 @@ public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCit
     double minTemp;
     double feelsTemp;
     double windSpeed;
+    MainActivity myActivity;
+    int myCityPosition;
 
 
-    public WeatherScreenCityCard(Context context, List<Cities> city, List<ForecastCity> cityForecast) {
+
+    public WeatherScreenCityCard(Context context, List<Cities> city, List<ForecastCity> cityForecast, MainActivity activity) {
         Log.d("WeatherScreenCityCard", " passing values");
         this.myContext = context;
         this.myCityList = city;
         this.myCityForecastList = cityForecast;
+        this.myActivity = activity;
 
     }
 
@@ -54,6 +83,7 @@ public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCit
     public void onBindViewHolder(@NonNull WeatherScreenCityCardHolder holder, int position) {
 
         Cities myCity = myCityList.get(position);
+        ForecastCity myForecastCity = myCityForecastList.get(position);
 
         holder.cityName.setText(myCity.getName());
         // TODO: No las estoy extrayendo de la API, cambiarlo todo y hacerlo:
@@ -146,8 +176,168 @@ public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCit
         holder.pressure.setText("Pressure: " + myCity.getPressure() + " hPa");
         holder.humidity.setText("Humidity: " + myCity.getHumidity() + " %");
 
+        myCityPosition = position;
+
+        holder.removeCity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Remove city: " + myCityPosition);
+                AlertDialog dialog = new AlertDialog.Builder(myContext, R.style.MaterialThemeDialog).create();
+                dialog.setTitle("Remove City");
+                dialog.setMessage("Are you sure?");
+                dialog.setCancelable(false);
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int buttonId) {
+                                ManagePreferences managePreferences = new ManagePreferences(myContext);
+                                managePreferences.removeLocation(myCityPosition+1);
+                                BottomNavigationView myBottomNavigationView = myActivity.findViewById(R.id.nav_view);
+                                System.out.println(myBottomNavigationView);
+                                myBottomNavigationView.setSelectedItemId(R.id.navigation_weather);
+                            }
+                        });
+
+                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int buttonId) {
+                            }
+                        });
+                dialog.show();
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(myContext, R.color.colorPrimaryDark));
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(myContext, R.color.colorPrimaryDark));
+            }
+        });
 
 
+
+        renderData(myForecastCity, holder.forecastChart_max, myForecastCity.getTemp_forecast(), true);
+
+        ArrayList<Double> humidityDouble = new ArrayList<>();
+        for (int i=0; i<myForecastCity.getHumidity_forecast().size(); ++i) {
+            humidityDouble.add((double) myForecastCity.getHumidity_forecast().get(i));
+        }
+
+        System.out.println(humidityDouble);
+        renderData(myForecastCity, holder.forecastChart_min, humidityDouble, false);
+
+
+    }
+
+    public void renderData(ForecastCity myForecastCity, LineChart forecastChart, List<Double> data, boolean isTemp) {
+
+        ArrayList<Entry> entries = new ArrayList<>();
+        ManagePreferences myPrefs = new ManagePreferences(myContext);
+
+        String unitTempPrefs = myPrefs.getDefaultUnitTemperature();
+        Float ymax = 0f;
+        Float ymin = 0f;
+        Float yaverage = 0f;
+
+        for (int i = 0; i < data.size(); i++) {
+            if(isTemp) {
+                if(unitTempPrefs.contains("C")) {
+                    entries.add(new Entry(i+1, (float) (data.get(i).floatValue()-273.15)));
+                    ymax = (float) (myForecastCity.getMax(data)-273.15);
+                    ymin = (float) (myForecastCity.getMin(data) -273.15);
+                    yaverage = (float) (myForecastCity.getAverage(data)-273.15);
+
+                }
+
+                else if (unitTempPrefs.contains("F")) {
+                    entries.add(new Entry(i+1, (float) ((data.get(i).floatValue()*9/5) - 459.67)));
+                    ymax = (float) ((myForecastCity.getMax(data)*9/5) - 459.67);
+                    ymin = (float) ((myForecastCity.getMin(data)*9/5) - 459.67);
+                    yaverage = (float) ((myForecastCity.getAverage(data)*9/5) - 459.67);
+                }
+
+                else { // Kelvin (default in API)
+                    entries.add(new Entry(i+1, (data.get(i).floatValue())));
+                    ymax = (float) myForecastCity.getMax(data);
+                    ymin = (float) myForecastCity.getMin(data);
+                    yaverage = (float) myForecastCity.getAverage(data);
+
+                }
+            }
+
+            else { // humidity
+                entries.add(new Entry(i+1, (data.get(i).floatValue())));
+                ymax = (float) myForecastCity.getMax(data);
+                ymin = (float) myForecastCity.getMin(data);
+                yaverage = (float) myForecastCity.getAverage(data);
+
+            }
+        }
+
+        System.out.println("Min " + ymin + " max " + ymax + " average " + yaverage);
+
+
+        System.out.println(entries.toString());
+
+
+
+        forecastChart.getLegend().setEnabled(false);
+        forecastChart.getDescription().setEnabled(false);
+
+        XAxis xAxis = forecastChart.getXAxis();
+        xAxis.enableGridDashedLine(10f, 10f, 0f);
+        xAxis.setEnabled(false);
+        xAxis.setAxisMaximum(myForecastCity.getTime_text().size());
+        xAxis.setAxisMinimum(0f);
+        xAxis.setDrawLimitLinesBehindData(true);
+
+        LimitLine averageLine = new LimitLine(yaverage, "Aver. " + String.format("%.1f", yaverage));
+        averageLine.setLineWidth(2f);
+        averageLine.enableDashedLine(10f, 10f, 0f);
+        averageLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        averageLine.setLineColor(myContext.getResources().getColor(R.color.colorTextPrimary));
+        averageLine.setTextColor(myContext.getResources().getColor(R.color.colorTextPrimary));
+        averageLine.setTextSize(12f);
+
+        YAxis yAxis = forecastChart.getAxisLeft();
+        yAxis.removeAllLimitLines();
+        yAxis.addLimitLine(averageLine);
+        yAxis.setAxisMaximum(ymax);
+        yAxis.setAxisMinimum(ymin);
+        yAxis.enableGridDashedLine(10f, 10f, 0f);
+        yAxis.setDrawZeroLine(false);
+        yAxis.setDrawLimitLinesBehindData(false);
+
+        forecastChart.getAxisRight().setEnabled(false);
+        setData(entries, forecastChart);
+    }
+
+
+    public void setData(List<Entry> values, LineChart forecastChart) {
+        LineDataSet set;
+
+        if (forecastChart.getData() != null &&
+                forecastChart.getData().getDataSetCount() > 0) {
+            set = (LineDataSet) forecastChart.getData().getDataSetByIndex(0);
+            set.setValues(values);
+            forecastChart.getData().notifyDataChanged();
+            forecastChart.notifyDataSetChanged();
+        } else {
+            set = new LineDataSet(values, "Temp max");
+            set.setDrawIcons(false);
+            set.enableDashedLine(10f, 5f, 0f);
+            set.enableDashedHighlightLine(10f, 5f, 0f);
+            set.setColor(Color.DKGRAY);
+            set.setCircleColor(Color.DKGRAY);
+            set.setLineWidth(2f);
+            set.setCircleRadius(3f);
+            set.setDrawCircleHole(false);
+            set.setValueTextSize(0f);
+            ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+            dataSets.add(set);
+            LineData data = new LineData(dataSets);
+            forecastChart.setData(data);
+            forecastChart.setTouchEnabled(true);
+
+            TemperatureMarkerView markerView = new TemperatureMarkerView(myContext, R.layout.forecast_weather_markerview);
+            forecastChart.setMarker(markerView);
+
+
+        }
     }
 
     @Override
@@ -155,6 +345,8 @@ public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCit
     {
         return myCityList.size();
     }
+
+
 
 
     public class WeatherScreenCityCardHolder extends RecyclerView.ViewHolder {
@@ -182,13 +374,20 @@ public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCit
         public TextView humidity;
         public TextView windSpeed;
         public TextView windDeg;
+        public LineChart forecastChart_max;
+        public LineChart forecastChart_min;
+
+        public ImageView removeCity;
+
 
 
         // Link every textView label with each atribute:
         public WeatherScreenCityCardHolder(@NonNull View itemView) {
             super(itemView);
 
-            System.out.println("entro aqui");
+            forecastChart_max = itemView.findViewById(R.id.forecast_chart_max);
+            forecastChart_min = itemView.findViewById(R.id.forecast_chart_min);
+
 
             // Current information:
             cityName = (TextView) itemView.findViewById(R.id.city_text_weather_screen);
@@ -218,6 +417,9 @@ public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCit
             Typeface font = Typeface.createFromAsset(myContext.getAssets(), myContext.getString(R.string.iconFontPath));
             currentSymbolWeather.setTypeface(font);
             thermometerWeather.setTypeface(font);
+
+
+            removeCity = itemView.findViewById(R.id.remove_city_weather);
         }
     }
 

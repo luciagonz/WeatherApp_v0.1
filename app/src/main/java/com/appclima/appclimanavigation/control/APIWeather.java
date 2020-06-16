@@ -162,13 +162,16 @@ public class APIWeather extends Activity {
                     stop iterating when validRequest = true (API returns correct values) or when no more word were found
                  */
 
+
                 // If API request worked fine, add information to ArrayListCurrentWeather:
-                currentWeatherInformation();
-                forecastWeatherInformation();
+                validRequest = currentWeatherInformation();
 
 
                 if (validRequest) {
 
+                    System.out.println("Valid request, create city: ");
+
+                    forecastWeatherInformation();
                     // 1 PART: CURRENT WEATHER
                     myCityObject = new Cities(longitude,latitude, weatherMainInfo, weatherDescription,
                             currentTemperature, maxTemperature, minTemperature, feelsTemperature,
@@ -183,9 +186,12 @@ public class APIWeather extends Activity {
                 }
 
                 else {
-                    Toast.makeText(myContext, "Unable to proceed with your request. Please, try again.", Toast.LENGTH_LONG).show();
+
+                    System.out.println("Request error, city not found");
+
                     return false;
                 }
+
 
             }
         }
@@ -255,8 +261,8 @@ public class APIWeather extends Activity {
                     time_text.add(dayListArray.getJSONObject(i).getString("dt_txt"));
                     temp_forecast.add(dayListArray.getJSONObject(i).getJSONObject("main").getDouble("temp"));
                     temp_feels_like_forecast.add(dayListArray.getJSONObject(i).getJSONObject("main").getDouble("feels_like"));
-                    temp_max_forecast.add(dayListArray.getJSONObject(i).getJSONObject("main").getDouble("temp_min"));
-                    temp_min_forecast.add(dayListArray.getJSONObject(i).getJSONObject("main").getDouble("temp_max"));
+                    temp_max_forecast.add(dayListArray.getJSONObject(i).getJSONObject("main").getDouble("temp_max"));
+                    temp_min_forecast.add(dayListArray.getJSONObject(i).getJSONObject("main").getDouble("temp_min"));
                     pressure_forecast.add(dayListArray.getJSONObject(i).getJSONObject("main").getInt("pressure"));
                     sea_level_forecast.add(dayListArray.getJSONObject(i).getJSONObject("main").getInt("sea_level"));
                     ground_level_forecast.add(dayListArray.getJSONObject(i).getJSONObject("main").getInt("grnd_level"));
@@ -281,13 +287,13 @@ public class APIWeather extends Activity {
     }
 
     // Parse current weather information from openweathermap.com
-    public void currentWeatherInformation(){
+    public boolean currentWeatherInformation(){
 
         // Get JSONObject for current weather:
         JSONObject weatherDataObject = getWeatherInformationFromApi(CURRENT_WEATHER_CITY_NAME);
 
-        // If validCity flag was set true in getWeatherInformationFromAPI, it means the city was correctly found, so we can parse data:
-        if (validRequest) {
+        if(validRequest) {
+            // If validCity flag was set true in getWeatherInformationFromAPI, it means the city was correctly found, so we can parse data:
             try {
 
                 // Parse data to extract important information from JSON:
@@ -335,13 +341,16 @@ public class APIWeather extends Activity {
                 Log.d("Sun info API", "Sunrise: " + sunrise + " Sunset: " + sunset);
                 Log.d("Country: ", country);
 
-            }
+                return validRequest = true;
 
-            catch (JSONException e)
-
-            {
+            } catch (JSONException e) {
                 e.printStackTrace();
+                return validRequest = false;
             }
+        }
+
+        else {
+            return validRequest = false;
         }
     }
 
@@ -831,7 +840,13 @@ public class APIWeather extends Activity {
     }
 
 
+    public String getCityName() {
+        return cityName;
+    }
 
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
 
     public Cities getMyCityObject() {
         return myCityObject;

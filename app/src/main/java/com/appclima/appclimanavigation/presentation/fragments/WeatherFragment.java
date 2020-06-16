@@ -90,7 +90,6 @@ public class WeatherFragment extends Fragment {
 
             // Define linear layout manager:
             LinearLayoutManager layoutManagerWeather = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-
             // find recycler view in home fragment by ID
             recyclerWeatherCard = (RecyclerView) myView.findViewById(R.id.weather_screen_RV);
 
@@ -98,9 +97,15 @@ public class WeatherFragment extends Fragment {
             recyclerWeatherCard.setLayoutManager(layoutManagerWeather);
 
             // Adapt information to cardview
-            WeatherScreenCityCard weatherScreenCityCard = new WeatherScreenCityCard(getContext(), cityList, cityForecastList);
+            WeatherScreenCityCard weatherScreenCityCard = new WeatherScreenCityCard(getContext(), cityList, cityForecastList, myActivity);
 
             recyclerWeatherCard.setAdapter(weatherScreenCityCard);
+
+            ManagePreferences managePreferences = new ManagePreferences(getContext());
+            System.out.println("Initiate weather fragment in " + managePreferences.getManagerLayoutPosition() + " position");
+
+            layoutManagerWeather.scrollToPosition(managePreferences.getManagerLayoutPosition());
+
 
             // Set Indicator to the scroll horizontal view:
             ScrollingPagerIndicator recyclerIndicator = myView.findViewById(R.id.indicator_weather_screen_cities_RV);

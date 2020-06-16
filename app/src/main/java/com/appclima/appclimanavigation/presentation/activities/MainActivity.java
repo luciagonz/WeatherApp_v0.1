@@ -74,9 +74,6 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<Chat> voiceMessages;
 
 
-    // To provide methods to other classes:
-    private static MainActivity instance;
-
     // ACTIVITY CYCLE LIFE METHODS:
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -293,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
     public void setVoiceMessages(ArrayList<Chat> voiceMessages) {
         this.voiceMessages = voiceMessages;
     }
+
 
     public boolean isAllowRefresh() {
         return allowRefresh;

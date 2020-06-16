@@ -1,5 +1,6 @@
 package com.appclima.appclimanavigation.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ForecastCity {
@@ -185,5 +186,36 @@ public class ForecastCity {
 
     public void setDegree_wind_forecast(List<Integer> degree_wind_forecast) {
         this.degree_wind_forecast = degree_wind_forecast;
+    }
+
+    // Method for getting the maximum value
+    public static double getMax(List<Double> inputArray){
+        double maxValue = inputArray.get(0);
+        for(int i=1;i < inputArray.size();i++){
+            if(inputArray.get(i) > maxValue){
+                maxValue = inputArray.get(i);
+            }
+        }
+        return maxValue;
+    }
+
+    // Method for getting the minimum value
+    public static double getMin(List<Double> inputArray){
+        double minValue = inputArray.get(0);
+        for(int i=1;i<inputArray.size();i++){
+            if(inputArray.get(i) < minValue){
+                minValue = inputArray.get(i);
+            }
+        }
+        return minValue;
+    }
+
+
+    public static double getAverage(List <Double> inputArray) {
+        Double sum = 0.00;
+        for (int i=0; i< inputArray.size(); i++) {
+            sum += inputArray.get(i);
+        }
+        return sum / inputArray.size();
     }
 }

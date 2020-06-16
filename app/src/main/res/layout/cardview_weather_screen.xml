@@ -91,6 +91,18 @@
                             android:layout_gravity="center"
                             android:id="@+id/city_location_type_weather_screen" />
 
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/ic_delete_city"
+                            android:layout_marginLeft="10dp"
+                            android:tint="@color/colorTextPrimary"
+                            android:layout_gravity="center"
+                            android:id="@+id/remove_city_weather" />
+
+
+
                     </LinearLayout>
                     <TextView
                         android:id="@+id/coordinates_text_weather_screen"
@@ -190,6 +202,7 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="2dp"
@@ -360,16 +373,43 @@
                         android:layout_height="fill_parent"
                         android:orientation="vertical">
 
-                        <!--- Here the recycler view -->
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/weather_forecast_RV_weather_screen"
+                        <TextView
                             android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent" />
+                            android:layout_height="wrap_content"
+                            android:text="Temperature"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12dp"
+                            android:textColor="@color/colorTextPrimary"
+                            android:background="@color/colorPrimaryDarkOpacity"
+                            android:textAlignment="center"/>
 
+                        <com.github.mikephil.charting.charts.LineChart
+                            android:id="@+id/forecast_chart_max"
+                            android:layout_width="fill_parent"
+                            android:layout_weight="10"
+                            android:layout_height="fill_parent" />
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Humidity"
+                            android:textColor="@color/colorTextPrimary"
+                            android:background="@color/colorPrimaryDarkOpacity"
+                            android:textStyle="bold"
+                            android:textSize="12dp"
+                            android:layout_gravity="center"
+                            android:textAlignment="center"/>
+
+                        <com.github.mikephil.charting.charts.LineChart
+                            android:id="@+id/forecast_chart_min"
+                            android:layout_width="fill_parent"
+                            android:layout_weight="10"
+                            android:layout_height="fill_parent" />
 
                     </LinearLayout>
+
+
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
         </LinearLayout>

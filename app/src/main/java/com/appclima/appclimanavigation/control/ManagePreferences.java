@@ -4,13 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
+import com.appclima.appclimanavigation.presentation.fragments.WeatherFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -183,6 +188,88 @@ public class ManagePreferences {
         return defaultLocation;
     }
 
+    public void setManagerLayoutPosition(int position) {
+        savePreferences("UserPrefs", "managerLayoutPosition", String.valueOf(position), 3);
+    }
+
+    public int getManagerLayoutPosition(){
+        return Integer.valueOf(getPreferences("UserPrefs", "managerLayoutPosition"));
+    }
+
+    public void saveDefaultPreferences (String name, String defaultCity) {
+
+        String onBoarding = "";
+        onBoarding = getPreferences("UserPrefs", "onBoardingDone");
+        if(onBoarding == null) {
+
+            // TODO: Initialize onBoarding
+            setManagerLayoutPosition(0);
+            setUmbrellaReminder(false);
+            setLocationUpdates(true);
+            setDarkModeTheme(false);
+            setDayOfWeek("Sunday");
+            setDefaultUnitWind("m/s");
+            setUserName(name);
+            setDefaultUnitTemperature("C");
+            savePreferences("UserPrefs", "citiesNames", defaultCity,3);
+            savePreferences("UserPrefs", "citiesTypes", "2",3);
+            savePreferences("UserPrefs", "onBoardingDone", "true",3);
+
+        }
+
+    }
+
+    public void removeLocation(int position) {
+        String citiesTypes = getPreferences("UserPrefs","citiesTypes");
+        String citiesNames = getPreferences("UserPrefs","citiesNames");
+
+        // City names and types to array:
+        String[] commaSeparatedCityArr = citiesNames.split("\\s*,\\s*");
+        List<String> cityNameArray = new ArrayList<String>(Arrays.asList(commaSeparatedCityArr));
+        System.out.println("Cities: " + cityNameArray);
+
+        String[] commaSeparatedTypeArr = citiesTypes.split("\\s*,\\s*");
+        List<String> cityNameTypes = new ArrayList<String>(Arrays.asList(commaSeparatedTypeArr));
+        System.out.println("Types: " + cityNameTypes);
+
+
+        for (int i = 0; i < cityNameTypes.size(); i++) {
+            if (cityNameTypes.get(i).contains(String.valueOf(position))) {
+
+                System.out.println("Default city deleted" + cityNameArray.get(i));
+                cityNameArray.remove(i);
+                cityNameTypes.remove(i);
+
+                System.out.println("New city array: " + cityNameArray);
+                System.out.println("New city array: " + cityNameTypes);
+
+                StringBuilder csvBuilderCity = new StringBuilder();
+                StringBuilder csvBuilderType = new StringBuilder();
+
+
+                for(String city : cityNameArray){
+                    csvBuilderCity.append(city);
+                    csvBuilderCity.append(",");
+                }
+
+                for (String type : cityNameTypes) {
+                    csvBuilderType.append(type);
+                    csvBuilderType.append(",");
+                }
+
+                String newCityList = csvBuilderCity.toString();
+                String newCityTypes = csvBuilderType.toString();
+
+                newCityList = newCityList.substring(0, newCityList.length() - (",").length());
+                newCityTypes = newCityTypes.substring(0, newCityTypes.length() - (",").length());
+
+                savePreferences("UserPrefs", "citiesTypes", newCityTypes, 3);
+                savePreferences("UserPrefs", "citiesNames", newCityList, 3);
+
+            }
+        }
+
+    }
 
     public void changeLocation(final String cityAdded, Integer cityAddedType){
         final String citiesTypes = getPreferences("UserPrefs","citiesTypes");
@@ -354,7 +441,6 @@ public class ManagePreferences {
                                 String newCitiesTypesPrefs = citiesTypes + ",3";
                                 savePreferences("UserPrefs", "citiesNames", newCitiesPrefs, 3);
                                 savePreferences("UserPrefs", "citiesTypes", newCitiesTypesPrefs, 3);
-
                             }
                         });
 

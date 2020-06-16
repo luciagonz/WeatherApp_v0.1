@@ -3,10 +3,14 @@ package com.appclima.appclimanavigation.control;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.CalendarContract;
 import android.util.Log;
 
@@ -23,8 +27,8 @@ import java.util.Date;
 
 public class ManageCalendar {
 
-    private Context myContext;
-    private Activity myActivity;
+    private static Context myContext;
+    private static Activity myActivity;
     private static final int PROJECTION_ID_INDEX = 0;
     private static final int PROJECTION_ACCOUNT_NAME_INDEX = 1;
     private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
@@ -49,6 +53,8 @@ public class ManageCalendar {
     private  ArrayList<String> calendarListName;
     private  ArrayList<Integer> calendarListColor;
 
+    private static boolean createEventAllDayChecked = false;
+    private static int createEventCalendarAccount;
 
 
     public ManageCalendar(Context myContext, Activity myActivity) {
@@ -159,7 +165,7 @@ public class ManageCalendar {
         Cursor cursor_day_events = myContext.getContentResolver()
                     .query(Uri.parse("content://com.android.calendar/events"),
                             new String[] { "calendar_id", "title", "description", "dtstart", "dtend","eventTimezone", "eventLocation", "allDay", "_id"},
-                            "( dtstart >=" + beginOfDay.getTimeInMillis() + " and dtstart <=" + endOfDay.getTimeInMillis() + ")",
+                            "( dtstart >=" + beginOfDay.getTimeInMillis() + " and dtstart <=" + endOfDay.getTimeInMillis() + " AND deleted != 1 )",
                             null,
                             "dtstart ASC");
 
@@ -230,22 +236,109 @@ public class ManageCalendar {
         }
 
 
-
-
         CalendarEvents calendarEvents = new CalendarEvents(nameOfEvent,
                 startDates, endDates, descriptions,
                 calendarID, eventLocation, allDayFlagEvent, eventColor, weatherDescriptionEvent, eventID, calendarName);
 
 
         return calendarEvents;
-
-
-
     }
 
-    public static void deleteEvent(int eventID) {
+    public static void deleteEvent(int eventID, int calendarID) {
         System.out.println("Delete event " + eventID);
+
+        // Delete event by ID:
+        ContentResolver cr =  myContext.getContentResolver();
+        cr.delete(ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID), null, null);
+
     }
+
+
+    public static void updateEvent (int eventID, Calendar beginTime, Calendar endTime,
+                                    String titleEvent, String descriptionEvent, String locationEvent, int calendarID)
+    {
+
+        Calendar beginDate = Calendar.getInstance();
+
+        long beginTimeDate = beginTime.getTimeInMillis();
+        beginDate.setTimeInMillis(beginTimeDate);
+
+        Calendar endDate = Calendar.getInstance();
+        long endTimeDate = endTime.getTimeInMillis();
+        endDate.setTimeInMillis(endTimeDate);
+
+        // Solving problem when event is after midday:
+        if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)>12) {
+            beginDate.add(Calendar.HOUR_OF_DAY, -12);
+            endDate.add(Calendar.HOUR_OF_DAY, -12);
+        }
+
+        System.out.println("updating event with ID = " + eventID + " name = " + titleEvent + " description = " + descriptionEvent
+        + " location = " + locationEvent + " begin date = " + getDate(beginTime.getTimeInMillis(), "dd/MM/yyyy HH:mm:ss a") +
+                " end date = " +  getDate(endTime.getTimeInMillis(), "dd/MM/yyyy HH:mm:ss a"));
+
+
+        ContentValues event = new ContentValues();
+        event.put("calendar_id", calendarID);
+        event.put("title", titleEvent);
+        event.put("description",  descriptionEvent);
+        event.put("eventLocation", locationEvent);
+        event.put("dtstart", beginDate.getTimeInMillis());
+        event.put("dtend", endDate.getTimeInMillis());
+        event.put("allDay", createEventAllDayChecked);
+        event.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Paris");
+
+        Uri eventsUri;
+        eventsUri = Uri.parse("content://com.android.calendar/events");
+
+        Uri eventUri = ContentUris.withAppendedId(eventsUri, eventID);
+
+        myActivity.getContentResolver().update(eventUri, event, null, null);
+
+    }
+
+    public static void createEvent (Calendar beginTime, Calendar endTime, String titleEvent,
+                                    String descriptionEvent, String locationEvent) {
+
+        System.out.println("Begin date: " + getDate(beginTime.getTimeInMillis(), "dd/MM/yyyy hh:mm:ss"));
+        System.out.println("End date: " + getDate(endTime.getTimeInMillis(), "dd/MM/yyyy hh:mm:ss"));
+
+        Calendar beginDate = Calendar.getInstance();
+        long beginTimeDate = beginTime.getTimeInMillis();
+        beginDate.setTimeInMillis(beginTimeDate);
+
+        Calendar endDate = Calendar.getInstance();
+        long endTimeDate = endTime.getTimeInMillis();
+        endDate.setTimeInMillis(endTimeDate);
+
+
+        // Solving problem when event is after midday:
+
+        if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)>12) {
+            beginDate.add(Calendar.HOUR_OF_DAY, -12);
+            endDate.add(Calendar.HOUR_OF_DAY, -12);
+        }
+
+        Log.d("Create event", "creating event...");
+
+        ContentValues event = new ContentValues();
+        event.put("calendar_id", createEventCalendarAccount);
+        event.put("title", titleEvent);
+        event.put("description",  descriptionEvent);
+        event.put("eventLocation", locationEvent);
+        event.put("dtstart", beginDate.getTimeInMillis());
+        event.put("dtend", endDate.getTimeInMillis());
+        event.put("allDay", createEventAllDayChecked);
+        event.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Paris");
+
+        Uri eventUri;
+        eventUri = Uri.parse("content://com.android.calendar/events");
+        myActivity.getContentResolver().insert(eventUri, event);
+        Log.d("Calendar", "Event created");
+
+    }
+
+
 
     public static String getDate(long milliSeconds, String dateFormat)
     {
@@ -259,7 +352,52 @@ public class ManageCalendar {
     }
 
 
+    public ArrayList<Integer> getCalendarListID() {
+        return calendarListID;
+    }
 
+    public void setCalendarListID(ArrayList<Integer> calendarListID) {
+        this.calendarListID = calendarListID;
+    }
 
+    public ArrayList<String> getCalendarListAccount() {
+        return calendarListAccount;
+    }
+
+    public void setCalendarListAccount(ArrayList<String> calendarListAccount) {
+        this.calendarListAccount = calendarListAccount;
+    }
+
+    public ArrayList<String> getCalendarListName() {
+        return calendarListName;
+    }
+
+    public void setCalendarListName(ArrayList<String> calendarListName) {
+        this.calendarListName = calendarListName;
+    }
+
+    public ArrayList<Integer> getCalendarListColor() {
+        return calendarListColor;
+    }
+
+    public void setCalendarListColor(ArrayList<Integer> calendarListColor) {
+        this.calendarListColor = calendarListColor;
+    }
+
+    public boolean isCreateEventAllDayChecked() {
+        return createEventAllDayChecked;
+    }
+
+    public void setCreateEventAllDayChecked(boolean createEventAllDayChecked) {
+        this.createEventAllDayChecked = createEventAllDayChecked;
+    }
+
+    public static int getCreateEventCalendarAccount() {
+        return createEventCalendarAccount;
+    }
+
+    public static void setCreateEventCalendarAccount(int createEventCalendarAccount) {
+        ManageCalendar.createEventCalendarAccount = createEventCalendarAccount;
+    }
 }
 

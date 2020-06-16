@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.model.Chat;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
+import com.appclima.appclimanavigation.presentation.fragments.HomeFragment;
 import com.appclima.appclimanavigation.presentation.fragments.VoiceFragment;
 
 import java.util.ArrayList;
@@ -78,41 +79,65 @@ public class VoiceCommands extends MainActivity {
             // WEATHER QUERIES IN CERTAIN LOCATION
             else if (speechRecognised.get(i).contains("weather") & speechRecognised.get(i).contains("in") & !speechRecognised.get(i).contains("default")) {
 
-                cityRequest = getLocationFromRequest(speechRecognised.get(i), "in");
-                fragmentDisplayed = "weather";
-                APIWeather apiWeather = new APIWeather(cityRequest, 3, myContext);
-                apiWeather.manageInformationRequest(false);
+                ArrayList<String> arrayCities = getArrayLocationFromRequest(speechRecognised.get(i), "in ", " for ");
+                APIWeather apiWeather = new APIWeather("", 3, myContext);
+                boolean validCity = false;
 
-                if(speechRecognised.get(i).contains("tomorrow")) {
-                    speechReplayed = "Weather in " + cityRequest +  " for tomorrow is " + apiWeather.getMostCommonTimeDescription(1) + ". Average temperature will be " +
-                                    apiWeather.getAverageTemperature(1) + " and " + apiWeather.getAverageHumidity(1) + " humidity.";
-                    isSpeechRecognised = true;
-                    break;
+
+                // Cities with more than 1 word:
+                for(int j = (arrayCities.size()-1); j >= 0; j--) {
+                    System.out.println("Ciudad evaluada: " + arrayCities.get(j));
+                    cityRequest = arrayCities.get(j);
+                    apiWeather.setCityName(cityRequest);
+                    validCity = apiWeather.manageInformationRequest(false);
+                    System.out.println("Valid request with " + cityRequest + ": " + validCity);
+                    if (validCity) {
+                        break;
+                    }
                 }
 
+                if(validCity) {
+                    System.out.println("Validated city: " + cityRequest);
+                    fragmentDisplayed = "weather";
+                    ManagePreferences managePreferences = new ManagePreferences(myContext);
+                    managePreferences.changeLocation(cityRequest, 3);
 
-                else if(speechRecognised.get(i).contains("forecast")) {
-                    apiWeather.averageTemperatureForecast();
-                    speechReplayed = "Today is " + apiWeather.getMostCommonTimeDescription(0) + ",  average temperature " + apiWeather.getAverageTemperature(0) + " and " + apiWeather.getAverageHumidity(0) + " average humidity;  \n" +
-                            apiWeather.getMostCommonTimeDescription(1) + " for tomorrow, average temperature " + apiWeather.getAverageTemperature(1) + " and " + apiWeather.getAverageHumidity(1) + " average humidity; \n" +
-                            apiWeather.getMostCommonTimeDescription(2) + " for " + apiWeather.getDayName(2) + ", average temperature "  + apiWeather.getAverageTemperature(2) + " and " + apiWeather.getAverageHumidity(2) + " average humidity; \n" +
-                            apiWeather.getMostCommonTimeDescription(3) + " for " + apiWeather.getDayName(3) + ", average temperature "  + apiWeather.getAverageTemperature(3) + " and " + apiWeather.getAverageHumidity(3) + " average humidity; \n" +
-                            apiWeather.getMostCommonTimeDescription(4) + " for " + apiWeather.getDayName(4) + ", average temperature "  + apiWeather.getAverageTemperature(4) + " and " + apiWeather.getAverageHumidity(4) + " average humidity.";
 
-                    isSpeechRecognised = true;
-                    break;
+                    if(speechRecognised.get(i).contains("tomorrow")) {
+                        speechReplayed = "Weather in " + cityRequest +  " for tomorrow is " + apiWeather.getMostCommonTimeDescription(1) + ". Average temperature will be " +
+                                apiWeather.getAverageTemperature(1) + " and " + apiWeather.getAverageHumidity(1) + " humidity.";
+                        isSpeechRecognised = true;
+                        break;
+                    }
+
+
+                    else if(speechRecognised.get(i).contains("forecast")) {
+                        apiWeather.averageTemperatureForecast();
+                        speechReplayed = "Today is " + apiWeather.getMostCommonTimeDescription(0) + ",  average temperature " + apiWeather.getAverageTemperature(0) + " and " + apiWeather.getAverageHumidity(0) + " average humidity;  \n" +
+                                apiWeather.getMostCommonTimeDescription(1) + " for tomorrow, average temperature " + apiWeather.getAverageTemperature(1) + " and " + apiWeather.getAverageHumidity(1) + " average humidity; \n" +
+                                apiWeather.getMostCommonTimeDescription(2) + " for " + apiWeather.getDayName(2) + ", average temperature "  + apiWeather.getAverageTemperature(2) + " and " + apiWeather.getAverageHumidity(2) + " average humidity; \n" +
+                                apiWeather.getMostCommonTimeDescription(3) + " for " + apiWeather.getDayName(3) + ", average temperature "  + apiWeather.getAverageTemperature(3) + " and " + apiWeather.getAverageHumidity(3) + " average humidity; \n" +
+                                apiWeather.getMostCommonTimeDescription(4) + " for " + apiWeather.getDayName(4) + ", average temperature "  + apiWeather.getAverageTemperature(4) + " and " + apiWeather.getAverageHumidity(4) + " average humidity.";
+
+                        isSpeechRecognised = true;
+                        break;
+                    }
+
+                    else {
+                        speechReplayed = "Current weather in " + cityRequest +  " is " +  apiWeather.getCurrentTimeDescription() + ". Current temperature is " + apiWeather.getCurrentTemperature()
+                                + " and " + apiWeather.getCurrentHumidity() + " humidity.";
+                        Log.d("SpeechReplayed", speechReplayed);
+                        isSpeechRecognised = true;
+                        break;
+                    }
                 }
 
                 else {
-                    speechReplayed = "Current weather in " + cityRequest +  " is " +  apiWeather.getCurrentTimeDescription() + ". Current temperature is " + apiWeather.getCurrentTemperature()
-                                    + " and " + apiWeather.getCurrentHumidity() + " humidity.";
-                    Log.d("SpeechReplayed", speechReplayed);
-                    isSpeechRecognised = true;
-                    break;
+                    fragmentDisplayed = "voice";
+                    speechReplayed = "Sorry, I didn't understand you, could you please repeat the question?";
+                    isSpeechRecognised = false;
                 }
-
             }
-
 
             // WEATHER QUERIES IN DEFAULT LOCATION
             else if (speechRecognised.get(i).contains("weather")) {
@@ -122,6 +147,7 @@ public class VoiceCommands extends MainActivity {
                 fragmentDisplayed = "weather";
                 APIWeather apiWeather = new APIWeather(defaultLocation, 3, myContext);
                 apiWeather.manageInformationRequest(true);
+                managePreferences.setManagerLayoutPosition(1);
 
                 if(speechRecognised.get(i).contains("tomorrow")) {
 
@@ -302,7 +328,12 @@ public class VoiceCommands extends MainActivity {
         for (int i = 0; i < wordsFromText.size(); i++) {
             if (wordsFromText.get(i).contains(previousWord)) {
                 // word "in" found: the next word will be the location
-                location = wordsFromText.get(i+1);
+                // TODO: Try to say more than 1 word:
+                System.out.println("Size: " + wordsFromText.size());
+                if ((wordsFromText.size() - 1)>i) {
+                    location = wordsFromText.get(i+1);
+                }
+
                 System.out.println("Location position:  " + i+1);
                 break;
             }
@@ -312,6 +343,39 @@ public class VoiceCommands extends MainActivity {
         System.out.println(location);
 
         return location;
+    }
+
+    public ArrayList<String> getArrayLocationFromRequest(String requestText, String firstKeyWord, String secondKeyWord) {
+        String cityText = "";
+        if(requestText.contains(firstKeyWord)){
+            cityText = requestText.split(firstKeyWord)[1].split(secondKeyWord)[0];
+        }
+
+        ArrayList<String> words = new ArrayList<>();
+        ArrayList<String> cities = new ArrayList<>();
+
+
+        for(String word : cityText.split(" ")) {
+            words.add(word);
+            System.out.println(words);
+        }
+
+        System.out.println("Words recognised: " + words);
+
+
+        for (int i = 0; i<words.size(); i++) {
+            if (i == 0) {
+                cities.add(words.get(i));
+            }
+
+            else {
+                cities.add(cities.get(i-1) + " " + words.get(i));
+            }
+        }
+
+        System.out.println("Cities recognised: " + cities);
+
+        return cities;
     }
 
 

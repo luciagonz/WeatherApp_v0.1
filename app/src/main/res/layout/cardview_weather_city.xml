@@ -88,20 +88,29 @@
                             android:text="New York City"
                             android:textAlignment="center"
                             android:layout_columnWeight="2"
+                            android:layout_gravity="left"
                             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                             android:textColor="@color/colorTextPrimary"
                             android:textSize="24sp"
                             />
-                        <Space android:layout_width="10dp"
-                            android:layout_height="wrap_content"/>
+
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/location_type_1_gps"
-                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
                             android:layout_gravity="center_vertical|right"
                             android:id="@+id/city_location_type" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_delete_city"
+                            android:layout_marginLeft="15dp"
+                            android:layout_gravity="center_vertical|right"
+                            android:id="@+id/city_remove_list" />
+
                     </GridLayout>
 
 
@@ -119,8 +128,8 @@
                             android:layout_weight="1"
                             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                             android:textColor="@color/colorTextPrimary"
-                            android:textSize="30dp"
-                            android:text="234.3F"
+                            android:textSize="26dp"
+                            android:text="234.3 ºF"
                             android:layout_centerInParent="true"
                             android:gravity="center"
                             android:textAlignment="gravity"
@@ -454,18 +463,7 @@
 
                 </LinearLayout>
             </GridLayout>
-            <TextView
-                android:id="@+id/temperature_unit_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorTextPrimary"
-                android:layout_gravity="center_vertical|right"
-                android:textAlignment="gravity"
-                android:textSize="10dp"
-                android:layout_marginRight="10dp"
-                android:gravity="right"
-                android:singleLine="true"
-                android:text="Temperature unit: ºF" />
+
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

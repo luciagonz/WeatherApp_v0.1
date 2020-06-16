@@ -1,9 +1,11 @@
 package com.appclima.appclimanavigation.presentation.cardviews;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -13,15 +15,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appclima.appclimanavigation.R;
+import com.appclima.appclimanavigation.control.ManagePreferences;
 import com.appclima.appclimanavigation.model.Cities;
 import com.appclima.appclimanavigation.model.ForecastCity;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
 import com.appclima.appclimanavigation.utilities.Font_icons;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -36,12 +42,14 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
     Context myContext;
     List<Cities> myCityList;
     List<ForecastCity> myCityForecastList;
+    Activity myActivity;
 
 
-    public WeatherCityCard(Context context, List<Cities> city, List<ForecastCity> cityForecast) {
+    public WeatherCityCard(Context context, List<Cities> city, List<ForecastCity> cityForecast, Activity myActivity) {
         this.myContext = context;
         this.myCityList = city;
         this.myCityForecastList = cityForecast;
+        this.myActivity = myActivity;
 
     }
 
@@ -54,11 +62,13 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
         System.out.println(myCityList);
 
         WeatherCityCardHolder eventCardView = new WeatherCityCardHolder(LayoutInflater.from(myContext).inflate(R.layout.cardview_weather_city, parent, false));
+
+
         return eventCardView;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WeatherCityCardHolder holder, int position) {
+    public void onBindViewHolder(@NonNull WeatherCityCardHolder holder, final int position) {
         // CURRENT WEATHER INFORMATION:
         // Update information from City model:
         Cities myCity = myCityList.get(position);
@@ -66,8 +76,9 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
         System.out.println(position);
 
         List<String> time_text = new ArrayList<>();
-        List<String> range_temp = new ArrayList<>();
+        List<Double> range_temp = new ArrayList<>();
         List<Integer> icons_ID = new ArrayList<>();
+
 
 
         for (int j = 0; j < myCityForecast.getTime_text().size(); j++){
@@ -77,9 +88,11 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
                 // Get data without year (dd-mm)
                 time_text.add((data_text.split("-")[2]) + "-" + (data_text.split("-")[1]));
                 icons_ID.add(myCityForecast.getWeatherIconID_forecast().get(j));
-                range_temp.add((myCityForecast.getTemp_max_forecast().get(j)).toString());
+                range_temp.add((myCityForecast.getTemp_max_forecast().get(j)));
             }
         }
+
+
 
         System.out.println("DATA RECOVER IN FRAGMENT:");
         System.out.println(time_text);
@@ -92,10 +105,7 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
         // Set icon from id:
         holder.currentsymbolWeather.setText(symbolDirectory);
 
-        // Convert double to string before set the value:
-        holder.currentDegrees.setText(String.valueOf(myCity.getCurrentTemperature()));
-        holder.currentmaxDegrees.setText(String.valueOf(myCity.getMaxTemperature()));
-        holder.currentminDegrees.setText(String.valueOf(myCity.getMinTemperature()));
+
 
         // Set drawable location according to its locationType:
 
@@ -118,17 +128,104 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
         holder.symbolWeather_4day.setText(icons_ID.get(3));
         holder.symbolWeather_5day.setText(icons_ID.get(4));
 
+        // Temperature depending on units:
+        ManagePreferences myPrefs = new ManagePreferences(myContext);
+
+        String unitTempPrefs = myPrefs.getDefaultUnitTemperature();
+
+
+        if(unitTempPrefs.contains("C")) {
+
+            holder.rangeTemperatures_1day.setText((String.format("%.1f", range_temp.get(0) - 273.15)) + "ºC");
+            holder.rangeTemperatures_2day.setText((String.format("%.1f", range_temp.get(1) - 273.15)) + "ºC");
+            holder.rangeTemperatures_3day.setText((String.format("%.1f", range_temp.get(2) - 273.15))+ "ºC");
+            holder.rangeTemperatures_4day.setText((String.format("%.1f", range_temp.get(3) - 273.15))+ "ºC");
+            holder.rangeTemperatures_5day.setText((String.format("%.1f", range_temp.get(4) - 273.15))+ "ºC");
+
+            holder.currentDegrees.setText((String.format("%.1f", myCity.getCurrentTemperature()-273.15)) + "ºC");
+            holder.currentmaxDegrees.setText((String.format("%.1f", myCity.getMaxTemperature()-273.15)) + "ºC");
+            holder.currentminDegrees.setText((String.format("%.1f", myCity.getMinTemperature()-273.15)) + "ºC");
+        }
+
+        else if (unitTempPrefs.contains("F")) {
+
+            holder.rangeTemperatures_1day.setText((String.format("%.1f",range_temp.get(0)*9/5 - 459.67)) + "ºF");
+            holder.rangeTemperatures_2day.setText((String.format("%.1f",range_temp.get(1)*9/5 - 459.67)) + "ºF");
+            holder.rangeTemperatures_3day.setText((String.format("%.1f",range_temp.get(2)*9/5 - 459.67))+ "ºF");
+            holder.rangeTemperatures_4day.setText((String.format("%.1f",range_temp.get(3)*9/5 - 459.67))+ "ºF");
+            holder.rangeTemperatures_5day.setText((String.format("%.1f", range_temp.get(4)*9/5 - 459.67))+ "ºF");
+
+            // Convert double to string before set the value:
+            holder.currentDegrees.setText((String.format("%.1f", myCity.getCurrentTemperature()*9/5 - 459.67)) + "ºF");
+            holder.currentmaxDegrees.setText((String.format("%.1f", myCity.getMaxTemperature()*9/5 - 459.67)) + "ºF");
+            holder.currentminDegrees.setText((String.format("%.1f", myCity.getMinTemperature()*9/5 - 459.67)) + "ºF");
+        }
+
+        else { // Kelvin (default in API)
+            holder.rangeTemperatures_1day.setText(String.format("%.1f", range_temp.get(0)) + "ºK");
+            holder.rangeTemperatures_2day.setText(String.format("%.1f", range_temp.get(1)) + "ºK");
+            holder.rangeTemperatures_3day.setText(String.format("%.1f", range_temp.get(2)) + "ºK");
+            holder.rangeTemperatures_4day.setText(String.format("%.1f", range_temp.get(3)) + "ºK");
+            holder.rangeTemperatures_5day.setText(String.format("%.1f", range_temp.get(4)) + "ºK");
+
+            // Convert double to string before set the value:
+            holder.currentDegrees.setText((String.format("%.0f", myCity.getCurrentTemperature())) + "ºK");
+            holder.currentmaxDegrees.setText((String.format("%.0f", myCity.getMaxTemperature())) + "ºK");
+            holder.currentminDegrees.setText((String.format("%.0f", myCity.getMinTemperature())) + "ºK");
+        }
+
         holder.date_1day.setText(time_text.get(0));
         holder.date_2day.setText(time_text.get(1));
         holder.date_3day.setText(time_text.get(2));
         holder.date_4day.setText(time_text.get(3));
         holder.date_5day.setText(time_text.get(4));
 
-        holder.rangeTemperatures_1day.setText(range_temp.get(0));
-        holder.rangeTemperatures_2day.setText(range_temp.get(1));
-        holder.rangeTemperatures_3day.setText(range_temp.get(2));
-        holder.rangeTemperatures_4day.setText(range_temp.get(3));
-        holder.rangeTemperatures_5day.setText(range_temp.get(4));
+        holder.currentsymbolWeather.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                System.out.println(position);
+                ManagePreferences managePreferences = new ManagePreferences(myContext);
+                managePreferences.setManagerLayoutPosition(position);
+                BottomNavigationView myBottomNavigationView = myActivity.findViewById(R.id.nav_view);
+                System.out.println(myBottomNavigationView);
+                myBottomNavigationView.setSelectedItemId(R.id.navigation_weather);
+            }
+        });
+
+        holder.removeCityIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Remove city: " + position);
+                AlertDialog dialog = new AlertDialog.Builder(myContext, R.style.MaterialThemeDialog).create();
+                dialog.setTitle("Remove City");
+                dialog.setMessage("Are you sure?");
+                dialog.setCancelable(false);
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int buttonId) {
+                                ManagePreferences managePreferences = new ManagePreferences(myContext);
+                                managePreferences.removeLocation(position+1);
+                                BottomNavigationView myBottomNavigationView = myActivity.findViewById(R.id.nav_view);
+                                System.out.println(myBottomNavigationView);
+                                myBottomNavigationView.setSelectedItemId(R.id.navigation_home);
+                            }
+                        });
+
+                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int buttonId) {
+                            }
+                        });
+                dialog.show();
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(myContext, R.color.colorPrimaryDark));
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(myContext, R.color.colorPrimaryDark));
+            }
+        });
+
+
+
+
 
     }
 
@@ -179,6 +276,7 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
         // GPS location: locationType = 2;
         // Asked location: locationType = 3;
         public ImageView locationTypeDrawable;
+        public ImageView removeCityIcon;
 
 
         // Link every textView label with each atribute:
@@ -186,6 +284,8 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
             super(itemView);
 
             System.out.println("entro aqui");
+
+
 
             // Current information:
             name = (TextView) itemView.findViewById(R.id.city_text_home);
@@ -227,6 +327,10 @@ public class WeatherCityCard extends RecyclerView.Adapter<WeatherCityCard.Weathe
 
             // Drawable location type:
             locationTypeDrawable = (ImageView) itemView.findViewById(R.id.city_location_type);
+
+            removeCityIcon = (ImageView) itemView.findViewById(R.id.city_remove_list);
+
+
 
         }
     }

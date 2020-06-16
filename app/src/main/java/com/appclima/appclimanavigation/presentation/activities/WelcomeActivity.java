@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.widget.TextView;
 
 import com.appclima.appclimanavigation.R;
+import com.appclima.appclimanavigation.control.ManagePreferences;
 import com.appclima.appclimanavigation.utilities.Font_icons;
 
 public class WelcomeActivity extends AppCompatActivity {
@@ -18,7 +19,7 @@ public class WelcomeActivity extends AppCompatActivity {
     Font_icons font_icons;
 
     // La pantalla de inicio tarda 4 segundos en cambiarse (pantalla de presentación)
-    private static int WELCOME_SCREEN_TIME_OUT = 4000;
+    private static int WELCOME_SCREEN_TIME_OUT = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +35,32 @@ public class WelcomeActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.icon)).setTypeface(font_icons.get_icons(
                 getResources().getString(R.string.iconFontPath), this));
 
-        // Pantalla de inicio durante 4 segundos, y luego lanza la pantalla principal:
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent welcomeIntent = new Intent (WelcomeActivity.this, MainActivity.class);
-                startActivity(welcomeIntent);
-                finish();
-            }
-        }, WELCOME_SCREEN_TIME_OUT);
+        ManagePreferences managePreferences = new ManagePreferences(this);
+        String onBoarding = managePreferences.getPreferences("UserPrefs","onBoardingDone");
+
+        if (onBoarding == null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent welcomeIntent = new Intent (WelcomeActivity.this, OnBoardingActivity.class);
+                    startActivity(welcomeIntent);
+                    finish();
+                }
+            }, WELCOME_SCREEN_TIME_OUT);
+        }
+
+        else {
+            // Pantalla de inicio durante 4 segundos, y luego lanza la pantalla principal:
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent welcomeIntent = new Intent (WelcomeActivity.this, MainActivity.class);
+                    startActivity(welcomeIntent);
+                    finish();
+                }
+            }, WELCOME_SCREEN_TIME_OUT);
+        }
+
+
     }
 }

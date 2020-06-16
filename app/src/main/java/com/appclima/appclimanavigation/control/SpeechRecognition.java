@@ -190,6 +190,8 @@ public class SpeechRecognition extends MainActivity {
                 item = R.id.navigation_voice;
         }
         myBottomNavigationView.setSelectedItemId(item);
+        //linealLayoutPosition = 0;
+
     }
 
     public String getTextReplayed() {
