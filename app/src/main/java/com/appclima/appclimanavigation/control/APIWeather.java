@@ -92,7 +92,7 @@ public class APIWeather extends Activity {
     private boolean validRequest = false;
 
 
-    // Constructor:
+    // Constructors:
     public APIWeather(String cityName, Integer locationType, Context myContext) {
         this.cityName = cityName;
         this.locationType = locationType; // to know if its fav, GPS or default
@@ -104,11 +104,6 @@ public class APIWeather extends Activity {
         this.locationType = 3; // to know if its fav, GPS or default
         this.myContext = myContext;
     }
-
-    public APIWeather(Context myContext) {
-        this.myContext = myContext;
-    }
-
 
 
     public boolean manageInformationRequest(boolean isCityValidated) {

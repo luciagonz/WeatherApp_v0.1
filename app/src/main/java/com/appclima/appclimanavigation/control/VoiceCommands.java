@@ -397,16 +397,14 @@ public class VoiceCommands extends MainActivity {
 
             // CALENDAR QUERIES
 
-            // TODO Extra: Adding weather to the calendar: Asking for the weather forecast for tomorrow should add silently the weather forecast in your calendar as a full day event.
-
-            // TODO Extra: Setting up recurring events: Adding an event should include repetitions
-
 
             else if (speechRecognised.get(i).contains("event") || speechRecognised.get(i).contains("calendar") || speechRecognised.get(i).contains("meeting")|| speechRecognised.get(i).contains("appointment")) {
 
                 if (speechRecognised.get(i).contains("tell") || speechRecognised.get(i).contains("give") || speechRecognised.get(i).contains("check")|| speechRecognised.get(i).contains("show")) {
 
                     if (speechRecognised.get(i).contains("tomorrow")) {
+                        ManagePreferences managePreferences = new ManagePreferences(myContext);
+                        managePreferences.setTomorrowDateFlag("true");
                         ManageCalendar manageCalendar = new ManageCalendar(myContext, myActivity);
                         SimpleDateFormat today = new SimpleDateFormat("MM/dd/yy");
                         CalendarEvents calendarEventsList;
@@ -427,6 +425,8 @@ public class VoiceCommands extends MainActivity {
 
                     else if (speechRecognised.get(i).contains("today")) {
                         ManageCalendar manageCalendar = new ManageCalendar(myContext, myActivity);
+                        ManagePreferences managePreferences = new ManagePreferences(myContext);
+                        managePreferences.setTomorrowDateFlag("false");
                         SimpleDateFormat today = new SimpleDateFormat("MM/dd/yy");
                         CalendarEvents calendarEventsList;
                         calendarEventsList = manageCalendar.getCalendarEvent(today.format(new Date()), today.format(new Date()));
