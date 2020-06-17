@@ -195,6 +195,7 @@ public class HomeFragment extends Fragment {
             // Set Indicator to the scroll horizontal view:
             ScrollingPagerIndicator recyclerIndicator = myView.findViewById(R.id.indicator_weather_cities_RV);
             recyclerIndicator.attachToRecyclerView(recyclerWeatherCards);
+            recyclerIndicator.bringToFront();
         }
 
         if(calendarEventsList.getNameOfEvent().size() > 0) {

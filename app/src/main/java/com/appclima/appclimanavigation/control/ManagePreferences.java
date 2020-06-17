@@ -186,14 +186,18 @@ public class ManagePreferences {
 
         String defaultLocation = "";
 
-        for(int i = 0; i < cityTypes.size(); i++) {
 
-            if (cityTypes.get(i).equals("2")) {
-                defaultLocation = cityNames.get(i);
-                System.out.println("Default location: " + defaultLocation);
+        if(citiesNames.contains("2")) {
+            for(int i = 0; i < cityTypes.size(); i++) {
+
+                if (cityTypes.get(i).equals("2")) {
+                    defaultLocation = cityNames.get(i);
+                    System.out.println("Default location: " + defaultLocation);
+                }
+
             }
-
         }
+
         return defaultLocation;
     }
 

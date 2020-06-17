@@ -2,6 +2,8 @@ package com.appclima.appclimanavigation.presentation.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +15,12 @@ import android.widget.EditText;
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.control.ManagePermissions;
 import com.appclima.appclimanavigation.control.ManagePreferences;
+import com.appclima.appclimanavigation.presentation.cardviews.FuncionalityCard;
+import com.appclima.appclimanavigation.presentation.cardviews.WeatherCityCard;
+
+import java.util.ArrayList;
+
+import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;
 
 public class OnBoardingActivity extends AppCompatActivity {
 
@@ -34,6 +42,27 @@ public class OnBoardingActivity extends AppCompatActivity {
         managePermissions.requestInternetPermission();
         managePermissions.requestLocationPermissions();
 
+        // RecyclerView data
+        ArrayList<String> textFunctionalities = new ArrayList<>();
+        ArrayList<Integer> iconsFunctionalities = new ArrayList<>();
+
+        textFunctionalities.add("Get weather forecasts information for selected cities supplied by openweathermap.org");
+        textFunctionalities.add("Read, modify and create events in your calendars");
+        textFunctionalities.add("And most importantly, you can do it all just using your voice!");
+
+        iconsFunctionalities.add(R.drawable.weather_functionality);
+        iconsFunctionalities.add(R.drawable.calendar_functionality);
+        iconsFunctionalities.add(R.drawable.voice_functionality);
+
+        // create cards and scrollview
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView recyclerView = findViewById(R.id.onBoarding_rv_functionalities);
+        recyclerView.setLayoutManager(layoutManager);
+        FuncionalityCard adapter = new FuncionalityCard(this, textFunctionalities, iconsFunctionalities);
+        recyclerView.setAdapter(adapter);
+
+        ScrollingPagerIndicator recyclerIndicator = findViewById(R.id.indicator_onBoarding_rv);
+        recyclerIndicator.attachToRecyclerView(recyclerView);
 
 
         enterButton.setOnClickListener(new View.OnClickListener() {
@@ -53,6 +82,7 @@ public class OnBoardingActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
     @Override
