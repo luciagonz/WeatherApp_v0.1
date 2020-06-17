@@ -67,6 +67,8 @@ public class VoiceCommands extends MainActivity {
                 if (speechRecognised.get(i).contains("tomorrow")) {
 
                     if (prefCities.length()>1) {
+                        speechReplayed = "Weather for tomorrow in ";
+
                         for (int j = 0; j < cityListNames.size(); j++) {
 
                             APIWeather apiWeather = new APIWeather(cityListNames.get(j), myContext);
@@ -75,6 +77,15 @@ public class VoiceCommands extends MainActivity {
                             if (isCityInformationCorrect) {
                                 cityList.add(cityListNames.get(j));
                                 cityDescription.add(apiWeather.getMostCommonTimeDescription(1));
+
+                                if (j < cityListNames.size() - 1) {
+                                    speechReplayed = speechReplayed + " " + cityListNames.get(j) + " is " + apiWeather.getMostCommonTimeDescription(1) + " , in ";
+
+                                }
+
+                                else {
+                                    speechReplayed = speechReplayed + " " + cityListNames.get(j) + " is " + apiWeather.getMostCommonTimeDescription(1);
+                                }
                             }
 
                         }
@@ -84,9 +95,12 @@ public class VoiceCommands extends MainActivity {
 
                     }
 
+                    else {
+                        speechReplayed = "No cities found";
+                    }
+
 
                     fragmentDisplayed = "weather";
-                    speechReplayed = "Weather in your locations for tomorrow are...";
                     isSpeechRecognised = true;
 
                     break;
@@ -97,9 +111,13 @@ public class VoiceCommands extends MainActivity {
                     isSpeechRecognised = true;
                     break;
 
-                } else {
+                }
+
+
+                else {
 
                     if (prefCities.length()>1) {
+                        speechReplayed = "Weather for today in ";
                         for (int j = 0; j < cityListNames.size(); j++) {
 
                             APIWeather apiWeather = new APIWeather(cityListNames.get(j), myContext);
@@ -108,6 +126,14 @@ public class VoiceCommands extends MainActivity {
                             if (isCityInformationCorrect) {
                                 cityList.add(cityListNames.get(j));
                                 cityDescription.add(apiWeather.getCurrentTimeDescription());
+                                if (j < cityListNames.size() - 1) {
+                                    speechReplayed = speechReplayed + " " + cityListNames.get(j) + " is " + apiWeather.getCurrentTimeDescription() + " , in ";
+
+                                }
+
+                                else {
+                                    speechReplayed = speechReplayed + " " + cityListNames.get(j) + " is " + apiWeather.getCurrentTimeDescription();
+                                }
                             }
 
                         }
@@ -117,8 +143,13 @@ public class VoiceCommands extends MainActivity {
 
                     }
 
+
+                else {
+                    speechReplayed = "No cities found";
+                }
+
+
                     fragmentDisplayed = "weather";
-                    speechReplayed = "Weather in your locations are these";
                     isSpeechRecognised = true;
                     break;
                 }
