@@ -14,20 +14,51 @@
         android:layout_centerHorizontal="true"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/user_name"
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="Hello, Lucia!"
-            android:layout_marginLeft="10dp"
-            android:textAlignment="gravity"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@color/colorTextPrimary"
-            android:textStyle="bold"
-            android:textSize="24sp"
-            app:fontFamily="@font/poppins_light"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="Hello, Lucia!"
+                android:layout_marginLeft="10dp"
+                android:textAlignment="gravity"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="@color/colorTextPrimary"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:layout_weight="1"
+                app:fontFamily="@font/poppins_light"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                android:textAlignment="gravity"
+                android:layout_marginRight="10dp"
+                android:textColor="@color/colorTextPrimary"
+                android:text="Add new"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|left"
+                android:layout_marginTop="20dp"
+                android:textAlignment="gravity"
+                android:layout_marginRight="20dp"
+                android:id="@+id/add_new_city_button"
+                android:scaleY="1.2"
+                android:scaleX="1.2"
+                android:src="@drawable/ic_add_event_calendar" />
+
+        </LinearLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/weather_cities_RV"

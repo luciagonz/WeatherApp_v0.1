@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.control.APIWeather;
@@ -19,6 +20,7 @@ import com.appclima.appclimanavigation.model.Chat;
 import com.appclima.appclimanavigation.model.Cities;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -110,8 +112,6 @@ public class MainActivity extends AppCompatActivity {
         voiceMessages = new ArrayList<>();
         Chat message1 = new Chat("Welcome to your voice assistant, I'm here to help you", 0);
         voiceMessages.add(message1);
-
-
     }
 
     @Override
@@ -127,7 +127,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // ActivityResult is treated on SpeechRecognition class:
-        speechRecognition.HandlerOnActivityResult(requestCode, resultCode, data);
+        try {
+            speechRecognition.HandlerOnActivityResult(requestCode, resultCode, data);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         if(speechRecognition.isWellRecognised()) {
             addChatMessage(speechRecognition.getTextRecognised(), 1);
             addChatMessage(speechRecognition.getTextReplayed(), 0);

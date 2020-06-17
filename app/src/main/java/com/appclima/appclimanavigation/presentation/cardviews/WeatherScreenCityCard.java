@@ -190,7 +190,7 @@ public class WeatherScreenCityCard extends RecyclerView.Adapter<WeatherScreenCit
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int buttonId) {
                                 ManagePreferences managePreferences = new ManagePreferences(myContext);
-                                managePreferences.removeLocation(myCityPosition+1);
+                                managePreferences.removeLocation(myCityPosition);
                                 BottomNavigationView myBottomNavigationView = myActivity.findViewById(R.id.nav_view);
                                 System.out.println(myBottomNavigationView);
                                 myBottomNavigationView.setSelectedItemId(R.id.navigation_weather);

@@ -18,6 +18,7 @@ public class CalendarEvents {
     private ArrayList<String> weatherDescriptionEvent;
     private ArrayList<Integer> eventID;
     private ArrayList<String> calendarName;
+    private ArrayList<String> recurringRule;
 
     public CalendarEvents(ArrayList<String> nameOfEvent,
                           ArrayList<String> startDates,
@@ -29,7 +30,8 @@ public class CalendarEvents {
                           ArrayList<Integer> eventColor,
                           ArrayList<String> weatherDescriptionEvent,
                           ArrayList<Integer> eventID,
-                          ArrayList<String> calendarName)
+                          ArrayList<String> calendarName,
+                          ArrayList<String> recurringRule)
     {
         this.nameOfEvent = nameOfEvent;
         this.startDates = startDates;
@@ -42,6 +44,7 @@ public class CalendarEvents {
         this.weatherDescriptionEvent = weatherDescriptionEvent;
         this.eventID = eventID;
         this.calendarName = calendarName;
+        this.recurringRule = recurringRule;
     }
 
     public ArrayList<String> getWeatherDescriptionEvent() {
@@ -132,6 +135,14 @@ public class CalendarEvents {
         this.calendarName = calendarName;
     }
 
+    public ArrayList<String> getRecurringRule() {
+        return recurringRule;
+    }
+
+    public void setRecurringRule(ArrayList<String> recurringRule) {
+        this.recurringRule = recurringRule;
+    }
+
     @Override
     public String toString() {
         return "CalendarEvents{" +
@@ -146,6 +157,7 @@ public class CalendarEvents {
                 ", weatherDescriptionEvent=" + weatherDescriptionEvent +
                 ", eventID=" + eventID +
                 ", calendarName=" + calendarName +
+                ", recurringRule=" + recurringRule +
                 '}';
     }
 }

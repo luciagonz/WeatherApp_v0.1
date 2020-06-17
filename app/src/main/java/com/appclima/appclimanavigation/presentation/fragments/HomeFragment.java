@@ -6,7 +6,9 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.media.TimedText;
 import android.os.Bundle;
@@ -17,7 +19,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -26,6 +30,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,7 +74,8 @@ public class HomeFragment extends Fragment {
     Button addEventButton;
 
     boolean allDayEvent = false;
-
+    boolean recurringEvent = false;
+    String recurringRule = null;
 
 
     // Empty constructor:
@@ -119,6 +125,44 @@ public class HomeFragment extends Fragment {
 
         openNewEventDialogOnClick();
         initializeRVWeather(homeView);
+
+        ImageView addEventButton = homeView.findViewById(R.id.add_new_city_button);
+        addEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog dialog = new AlertDialog.Builder(getContext(), R.style.MaterialThemeDialog).create();
+                dialog.setTitle("Add City");
+                final EditText input = new EditText(getContext());
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                input.setTextColor(getResources().getColor(R.color.colorPrimaryText));
+                Drawable line = input.getBackground();
+                line.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP); // change the line color
+                input.setBackgroundDrawable(line);
+                dialog.setView(input);
+                dialog.setIcon(R.drawable.ic_add_event_calendar);
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int buttonId) {
+                                ManagePreferences addEventPreferences = new ManagePreferences(getContext());
+                                addEventPreferences.changeLocation(input.getText().toString(), 3);
+                                getFragmentManager().beginTransaction().detach(HomeFragment.this).attach(HomeFragment.this).commit();
+                            }
+                        });
+
+                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int buttonId) {
+                            }
+                        });
+                dialog.show();
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+
+            }
+        });
 
         // List view
         return homeView;
@@ -201,22 +245,24 @@ public class HomeFragment extends Fragment {
         cityList = new ArrayList<>();
         cityForecastList = new ArrayList<>();
 
-        for (int i = 0; i < cityListNames.size(); i++) {
+        if (citiesNames.length()>1) {
+            for (int i = 0; i < cityListNames.size(); i++) {
 
-            Log.d("City: ", cityListNames.get(i) +  " type " + Integer.valueOf(cityTypesString.get(i)));
+                Log.d("City: ", cityListNames.get(i) +  " type " + Integer.valueOf(cityTypesString.get(i)));
 
-            APIWeather apiWeather = new APIWeather(cityListNames.get(i), Integer.valueOf(cityTypesString.get(i)), getContext());
-            boolean isCityInformationCorrect = apiWeather.manageInformationRequest(true);
+                APIWeather apiWeather = new APIWeather(cityListNames.get(i), Integer.valueOf(cityTypesString.get(i)), getContext());
+                boolean isCityInformationCorrect = apiWeather.manageInformationRequest(true);
 
-            if (isCityInformationCorrect) {
-                cityList.add(apiWeather.getMyCityObject());
-                cityForecastList.add(apiWeather.getMyForecastCity());
+                if (isCityInformationCorrect) {
+                    cityList.add(apiWeather.getMyCityObject());
+                    cityForecastList.add(apiWeather.getMyForecastCity());
+                }
+
             }
 
+            Log.d("Current weather array: ", String.valueOf(cityList.size()));
+            Log.d("Forecast weather array:", String.valueOf(cityForecastList.size()));
         }
-
-        Log.d("Current weather array: ", String.valueOf(cityList.size()));
-        Log.d("Forecast weather array:", String.valueOf(cityForecastList.size()));
     }
 
     private void openNewEventDialogOnClick() {
@@ -276,13 +322,33 @@ public class HomeFragment extends Fragment {
                 final Switch allDaySwitch = newEventDialog.findViewById(R.id.all_day_event_switch);
                 changeAllDaySwitch(allDaySwitch, manageCalendar);
 
+
+                // Change switch state depending on recurring event attribute
+                final Switch recurringEventSwitch = newEventDialog.findViewById(R.id.recurring_event_switch);
+                recurringEventSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if(isChecked) {
+                            System.out.println("Recurring event ON");
+                            // TODO: implement more rules
+                            recurringRule =  "FREQ=DAILY;WKST=SU";
+                            recurringEvent = true;
+                        }
+
+                        else {
+                            System.out.println("Recurring event OFF");
+                            recurringEvent = false;
+                            recurringRule = null;
+                        }
+                    }
+                });
+
                 // Date pickers for start and end date:
                 final Calendar startDate = Calendar.getInstance();
                 showDateTimePicker(startDate, eventStart);
 
                 final Calendar endDate = Calendar.getInstance();
                 showDateTimePicker(endDate, eventEnd);
-
 
                 // OK button to save calendar changes and close dialog:
                 Button positiveButton = newEventDialog.findViewById(R.id.ok_button_event_dialog);
@@ -291,7 +357,7 @@ public class HomeFragment extends Fragment {
                     public void onClick(View v) {
                         manageCalendar.createEvent(startDate, endDate,
                                 eventName.getText().toString(), eventDescription.getText().toString(),
-                                locationEvent.getText().toString());
+                                locationEvent.getText().toString(), recurringRule);
 
                         // Update fragment to show changes
                         getFragmentManager().beginTransaction().detach(HomeFragment.this).attach(HomeFragment.this).commit();
@@ -392,7 +458,6 @@ public class HomeFragment extends Fragment {
     private void changeAllDaySwitch (Switch allDaySwitch, final ManageCalendar manageCalendar) {
 
         allDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 

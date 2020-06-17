@@ -171,8 +171,8 @@ public class ManageLocation extends MainActivity {
         if (isLocationUpdateEnabled()) {
             // Creates and configure location request:
             myLocationRequest = LocationRequest.create();
-            myLocationRequest.setInterval(60000);
-            myLocationRequest.setFastestInterval(5000);
+            myLocationRequest.setInterval(100000);
+            myLocationRequest.setFastestInterval(50000);
             myLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             myLocationCallback = new LocationCallback() {
                 @Override

@@ -146,7 +146,6 @@ public class APIWeather extends Activity {
                 }
 
                 else {
-                    Toast.makeText(myContext, "Unable to proceed with your request. Please, try again.", Toast.LENGTH_LONG).show();
                     return false;
                 }
             }

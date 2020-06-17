@@ -72,9 +72,10 @@ public class WeatherFragment extends Fragment {
     // Set the fragment view
     final View weatherView = inflater.inflate(R.layout.fragment_weather, container, false);
 
-        initializeRVWeatherScreen(weatherView);
+    initializeRVWeatherScreen(weatherView);
 
-        return weatherView;
+    return weatherView;
+
     }
 
     private void initializeRVWeatherScreen (View myView) {
@@ -104,8 +105,7 @@ public class WeatherFragment extends Fragment {
             ManagePreferences managePreferences = new ManagePreferences(getContext());
             System.out.println("Initiate weather fragment in " + managePreferences.getManagerLayoutPosition() + " position");
 
-            layoutManagerWeather.scrollToPosition(managePreferences.getManagerLayoutPosition());
-
+            recyclerWeatherCard.getLayoutManager().smoothScrollToPosition(recyclerWeatherCard, new RecyclerView.State(), managePreferences.getManagerLayoutPosition());
 
             // Set Indicator to the scroll horizontal view:
             ScrollingPagerIndicator recyclerIndicator = myView.findViewById(R.id.indicator_weather_screen_cities_RV);
@@ -131,18 +131,20 @@ public class WeatherFragment extends Fragment {
         cityList = new ArrayList<>();
         cityForecastList = new ArrayList<>();
 
-        for (int i = 0; i < cityListNames.size(); i++) {
+        if (citiesNames.length() > 1) {
+            for (int i = 0; i < cityListNames.size(); i++) {
 
-            Log.d("City: ", cityListNames.get(i) +  " type " + cityTypesString.get(i));
+                Log.d("City: ", cityListNames.get(i) + " type " + cityTypesString.get(i));
 
-            APIWeather apiWeather = new APIWeather(cityListNames.get(i), Integer.valueOf(cityTypesString.get(i)),getContext());
-            boolean isCityInformationCorrect = apiWeather.manageInformationRequest(true);
+                APIWeather apiWeather = new APIWeather(cityListNames.get(i), Integer.valueOf(cityTypesString.get(i)), getContext());
+                boolean isCityInformationCorrect = apiWeather.manageInformationRequest(true);
 
-            if (isCityInformationCorrect) {
-                cityList.add(apiWeather.getMyCityObject());
-                cityForecastList.add(apiWeather.getMyForecastCity());
+                if (isCityInformationCorrect) {
+                    cityList.add(apiWeather.getMyCityObject());
+                    cityForecastList.add(apiWeather.getMyForecastCity());
+                }
+
             }
-
         }
 
         Log.d("Current weather array: ", String.valueOf(cityList.size()));

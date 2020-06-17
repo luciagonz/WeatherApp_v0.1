@@ -219,7 +219,9 @@ public class ManagePreferences {
 
     }
 
-    public void removeLocation(int position) {
+    public void removeLocation(int cityPosition) {
+
+        System.out.println("Remove city " + String.valueOf(cityPosition));
         String citiesTypes = getPreferences("UserPrefs","citiesTypes");
         String citiesNames = getPreferences("UserPrefs","citiesNames");
 
@@ -227,48 +229,71 @@ public class ManagePreferences {
         String[] commaSeparatedCityArr = citiesNames.split("\\s*,\\s*");
         List<String> cityNameArray = new ArrayList<String>(Arrays.asList(commaSeparatedCityArr));
         System.out.println("Cities: " + cityNameArray);
+        cityNameArray.remove(cityPosition);
+        System.out.println("New cities: " + cityNameArray);
 
-        String[] commaSeparatedTypeArr = citiesTypes.split("\\s*,\\s*");
-        List<String> cityNameTypes = new ArrayList<String>(Arrays.asList(commaSeparatedTypeArr));
+
+        // City names and types to array:
+        String[] commaSeparatedTypesArr = citiesTypes.split("\\s*,\\s*");
+        List<String> cityNameTypes = new ArrayList<String>(Arrays.asList(commaSeparatedTypesArr));
         System.out.println("Types: " + cityNameTypes);
+        cityNameTypes.remove(cityPosition);
+        System.out.println("New types: " + cityNameTypes);
 
 
-        for (int i = 0; i < cityNameTypes.size(); i++) {
-            if (cityNameTypes.get(i).contains(String.valueOf(position))) {
-
-                System.out.println("Default city deleted" + cityNameArray.get(i));
-                cityNameArray.remove(i);
-                cityNameTypes.remove(i);
-
-                System.out.println("New city array: " + cityNameArray);
-                System.out.println("New city array: " + cityNameTypes);
-
-                StringBuilder csvBuilderCity = new StringBuilder();
-                StringBuilder csvBuilderType = new StringBuilder();
+        StringBuilder csvBuilderCity = new StringBuilder();
+        StringBuilder csvBuilderType = new StringBuilder();
 
 
-                for(String city : cityNameArray){
-                    csvBuilderCity.append(city);
-                    csvBuilderCity.append(",");
-                }
+        for(String city : cityNameArray){
+            csvBuilderCity.append(city);
+            csvBuilderCity.append(",");
+        }
 
-                for (String type : cityNameTypes) {
-                    csvBuilderType.append(type);
-                    csvBuilderType.append(",");
-                }
+        for (String type : cityNameTypes) {
+            csvBuilderType.append(type);
+            csvBuilderType.append(",");
+        }
 
-                String newCityList = csvBuilderCity.toString();
-                String newCityTypes = csvBuilderType.toString();
+        String newCityList = csvBuilderCity.toString();
+        String newCityTypes = csvBuilderType.toString();
 
-                newCityList = newCityList.substring(0, newCityList.length() - (",").length());
-                newCityTypes = newCityTypes.substring(0, newCityTypes.length() - (",").length());
+        if (newCityList.length() > 1) {
 
-                savePreferences("UserPrefs", "citiesTypes", newCityTypes, 3);
-                savePreferences("UserPrefs", "citiesNames", newCityList, 3);
+            newCityList = newCityList.substring(0, newCityList.length() - (",").length());
+            newCityTypes = newCityTypes.substring(0, newCityTypes.length() - (",").length());
 
+            System.out.println(newCityList);
+            System.out.println(newCityTypes);
+
+        }
+
+        savePreferences("UserPrefs", "citiesTypes", newCityTypes, 3);
+        savePreferences("UserPrefs", "citiesNames", newCityList, 3);
+
+    }
+
+
+    public int getCityPosition(String city) {
+        final String citiesTypes = getPreferences("UserPrefs","citiesTypes");
+        final String citiesNames = getPreferences("UserPrefs","citiesNames");
+
+        // City names and types to array:
+        String[] commaSeparatedCityArr = citiesNames.split("\\s*,\\s*");
+        List<String> cityNameArray = new ArrayList<String>(Arrays.asList(commaSeparatedCityArr));
+        System.out.println("Cities: " + cityNameArray);
+        System.out.println("There are " +  cityNameArray.size() + " cities: " + cityNameArray);
+
+        int position = -1;
+
+        for (int i = 0; i < cityNameArray.size(); i++) {
+            System.out.println("Evaluated city :" + cityNameArray.get(i));
+            if (cityNameArray.get(i).contains(city)) {
+                position = i;
             }
         }
 
+        return position;
     }
 
     public void changeLocation(final String cityAdded, Integer cityAddedType){

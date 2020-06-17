@@ -15,6 +15,7 @@ import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -118,7 +119,7 @@ public class SpeechRecognition extends MainActivity {
 
 
     // This method handles when speech recogniser intent is on:
-    public void HandlerOnActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void HandlerOnActivityResult(int requestCode, int resultCode, @Nullable Intent data) throws ParseException {
 
         // Manage voice commands
         switch (requestCode) {
@@ -166,7 +167,8 @@ public class SpeechRecognition extends MainActivity {
     public void selectBottomNavigationOption(String selectedItem) {
 
         // Find navigation by id:
-        BottomNavigationView myBottomNavigationView = myActivity.findViewById(R.id.nav_view);
+        BottomNavigationView myBottomNavigationView;
+        myBottomNavigationView = myActivity.findViewById(R.id.nav_view);
         System.out.println(myBottomNavigationView);
         // Defines default item id:
         Integer item = null;
@@ -190,8 +192,7 @@ public class SpeechRecognition extends MainActivity {
                 item = R.id.navigation_voice;
         }
         myBottomNavigationView.setSelectedItemId(item);
-        //linealLayoutPosition = 0;
-
+        ManagePreferences managePreferences = new ManagePreferences(myContext);
     }
 
     public String getTextReplayed() {

@@ -55,6 +55,8 @@ public class CalendarFragment extends Fragment {
     View calendarView;
     boolean allDayEvent;
     Button addEventButton;
+    boolean recurringEvent = false;
+    String recurringRule = null;
 
 
 
@@ -280,12 +282,33 @@ public class CalendarFragment extends Fragment {
                 final Switch allDaySwitch = newEventDialog.findViewById(R.id.all_day_event_switch);
                 changeAllDaySwitch(allDaySwitch, manageCalendar);
 
+                // Change switch state depending on recurring event attribute
+                final Switch recurringEventSwitch = newEventDialog.findViewById(R.id.recurring_event_switch);
+                recurringEventSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if(isChecked) {
+                            System.out.println("Recurring event ON");
+                            // TODO: implement more rules
+                            recurringRule =  "FREQ=DAILY;WKST=SU";
+                            recurringEvent = true;
+                        }
+
+                        else {
+                            System.out.println("Recurring event OFF");
+                            recurringEvent = false;
+                            recurringRule = null;
+                        }
+                    }
+                });
+
                 // Date pickers for start and end date:
                 final Calendar startDate = Calendar.getInstance();
                 showDateTimePicker(startDate, eventStart);
 
                 final Calendar endDate = Calendar.getInstance();
                 showDateTimePicker(endDate, eventEnd);
+
 
 
                 // OK button to save calendar changes and close dialog:
@@ -295,7 +318,7 @@ public class CalendarFragment extends Fragment {
                     public void onClick(View v) {
                         manageCalendar.createEvent(startDate, endDate,
                                 eventName.getText().toString(), eventDescription.getText().toString(),
-                                locationEvent.getText().toString());
+                                locationEvent.getText().toString(),recurringRule);
 
                         // Update fragment to show changes
                         getFragmentManager().beginTransaction().detach(CalendarFragment.this).attach(CalendarFragment.this).commit();

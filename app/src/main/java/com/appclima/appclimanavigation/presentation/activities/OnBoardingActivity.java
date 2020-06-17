@@ -60,6 +60,5 @@ public class OnBoardingActivity extends AppCompatActivity {
         permissionRequestManager.permissionManager(MainActivity.READ_CALENDAR_PERMISSION, MainActivity.READ_CALENDAR_PERMISSION_REQUEST_CODE);
         permissionRequestManager.permissionManager(MainActivity.INTERNET_NETWORK_STATE, MainActivity.INTERNET_NETWORK_STATE_REQUEST_CODE);
         permissionRequestManager.permissionManager(MainActivity.INTERNET_PERMISSION, MainActivity.INTERNET_PERMISSION_REQUEST_CODE);
-
     }
 }

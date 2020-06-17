@@ -139,6 +139,44 @@
                     </LinearLayout>
 
                     <LinearLayout
+
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:text="Recurring event?"
+                            android:textColor="@color/colorTextPrimary"
+                            android:textStyle="bold"
+                            android:gravity="left"
+                            android:textAlignment="gravity"
+                            android:layout_gravity="center"
+                            />
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:gravity="center"
+                            android:layout_height="wrap_content">
+
+                            <Switch
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="40dp"
+                                android:layout_marginRight="40dp"
+                                android:id="@+id/recurring_event_switch"
+                                android:layout_gravity="center"
+                                android:theme="@style/SwitchPrefences"
+                                android:gravity="center"
+                                />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"

@@ -57,8 +57,8 @@ public class CalendarEventCard extends RecyclerView.Adapter<CalendarEventCard.Ca
     Activity myActivity;
     Fragment myFragment;
     boolean allDayEvent;
-    String eventNameString = "";
-
+    boolean recurringEvent;
+    String recurringRule;
 
 
 
@@ -255,6 +255,18 @@ public class CalendarEventCard extends RecyclerView.Adapter<CalendarEventCard.Ca
 
                 // Change switch state depending on all_day attribute
                 Switch allDaySwitch = eventDialog.findViewById(R.id.all_day_event_switch);
+                Switch recurrentEventSwitch = eventDialog.findViewById(R.id.recurring_event_switch);
+
+                if (!(calendarEventsList.getRecurringRule().get(position) == null)) {
+                    recurringEvent = true;
+                    recurrentEventSwitch.setChecked(true);
+                }
+
+                else {
+                    recurringEvent = false;
+                    recurrentEventSwitch.setChecked(false);
+                }
+
 
                 if (calendarEventsList.getAllDayFlagEvent().get(position)) {
                     allDayEvent = true;
@@ -268,6 +280,7 @@ public class CalendarEventCard extends RecyclerView.Adapter<CalendarEventCard.Ca
 
                 final ManageCalendar manageCalendar = new ManageCalendar(context, myActivity);
                 changeAllDaySwitch(allDaySwitch, manageCalendar);
+                changeRecurringEvent(recurrentEventSwitch);
 
 
                 // OK button to save calendar changes and close dialog:
@@ -315,7 +328,7 @@ public class CalendarEventCard extends RecyclerView.Adapter<CalendarEventCard.Ca
 
                         manageCalendar.updateEvent(calendarEventsList.getEventID().get(position), beginDateCal, endDateCal,
                                 eventName.getText().toString(), eventDescription.getText().toString(), locationEvent.getText().toString(),
-                                calendarEventsList.getCalendarID().get(position));
+                                calendarEventsList.getCalendarID().get(position), recurringRule);
 
                         Toast.makeText(context, "Event changed", Toast.LENGTH_SHORT).show();
                         myFragment.getFragmentManager().beginTransaction().detach(myFragment).attach(myFragment).commit();
@@ -422,6 +435,26 @@ public class CalendarEventCard extends RecyclerView.Adapter<CalendarEventCard.Ca
                     manageCalendar.setCreateEventAllDayChecked(false);
                     allDayEvent = false;
 
+                }
+            }
+        });
+    }
+
+    private void changeRecurringEvent (Switch recurringEvent) {
+
+        recurringEvent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                // If switch is on, set True tu manageCalendar variable to pass the value to the event:
+                if(isChecked) {
+                    Log.d("Switch Clicked", "Recurring rule = " + true);
+                    recurringRule = "FREQ=DAILY;WKST=SU";
+                }
+                else {
+                    Log.d("Switch Clicked", "Recurring rule = " + false);
+                    recurringRule = null;
                 }
             }
         });
