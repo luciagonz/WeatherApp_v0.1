@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.model.CalendarEvents;
 import com.appclima.appclimanavigation.model.Chat;
+import com.appclima.appclimanavigation.model.Cities;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
 import com.appclima.appclimanavigation.presentation.fragments.HomeFragment;
 import com.appclima.appclimanavigation.presentation.fragments.VoiceFragment;
@@ -15,8 +16,10 @@ import com.appclima.appclimanavigation.presentation.fragments.VoiceFragment;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class VoiceCommands extends MainActivity {
     private String speechReplayed;
@@ -56,18 +59,64 @@ public class VoiceCommands extends MainActivity {
             if (speechRecognised.get(i).contains("weather") & speechRecognised.get(i).contains("in") & speechRecognised.get(i).contains("locations")) {
                 ManagePreferences managePreferences = new ManagePreferences(myContext);
                 String prefCities = managePreferences.getPreferences("UserPrefs", "citiesNames");
+                List<String> cityListNames = Arrays.asList(prefCities.split(","));
+
+                ArrayList<String> cityList = new ArrayList<>();
+                ArrayList<String> cityDescription = new ArrayList<>();
 
                 if (speechRecognised.get(i).contains("tomorrow")) {
+
+                    if (prefCities.length()>1) {
+                        for (int j = 0; j < cityListNames.size(); j++) {
+
+                            APIWeather apiWeather = new APIWeather(cityListNames.get(j), myContext);
+                            boolean isCityInformationCorrect = apiWeather.manageInformationRequest(true);
+
+                            if (isCityInformationCorrect) {
+                                cityList.add(cityListNames.get(j));
+                                cityDescription.add(apiWeather.getMostCommonTimeDescription(1));
+                            }
+
+                        }
+
+                        Log.d("Current cities:", cityList.toString());
+                        Log.d("Weather descrip.:", cityDescription.toString());
+
+                    }
+
+
                     fragmentDisplayed = "weather";
                     speechReplayed = "Weather in your locations for tomorrow are...";
                     isSpeechRecognised = true;
+
                     break;
+
                 } else if (speechRecognised.get(i).contains("forecast")) {
                     fragmentDisplayed = "weather";
                     speechReplayed = "Here is your weather screen with all the information about forecast in your cities: " + prefCities;
                     isSpeechRecognised = true;
                     break;
+
                 } else {
+
+                    if (prefCities.length()>1) {
+                        for (int j = 0; j < cityListNames.size(); j++) {
+
+                            APIWeather apiWeather = new APIWeather(cityListNames.get(j), myContext);
+                            boolean isCityInformationCorrect = apiWeather.manageInformationRequest(true);
+
+                            if (isCityInformationCorrect) {
+                                cityList.add(cityListNames.get(j));
+                                cityDescription.add(apiWeather.getCurrentTimeDescription());
+                            }
+
+                        }
+
+                        Log.d("Current cities:", cityList.toString());
+                        Log.d("Weather descrip.:", cityDescription.toString());
+
+                    }
+
                     fragmentDisplayed = "weather";
                     speechReplayed = "Weather in your locations are these";
                     isSpeechRecognised = true;
@@ -373,11 +422,11 @@ public class VoiceCommands extends MainActivity {
                     }
 
                 } else if (speechRecognised.get(i).contains("set") || speechRecognised.get(i).contains("create")) {
+                    ManagePreferences managePreferences = new ManagePreferences(myContext);
                     String name = "Default title";
                     String description = "Default description";
                     Integer startHour = 0;
                     Integer endHour = 0;
-                    ManagePreferences managePreferences = new ManagePreferences(myContext);
                     String location = managePreferences.getDefaultLocation();
                     String recurringRule = null;
                     boolean allDayEvent = false;

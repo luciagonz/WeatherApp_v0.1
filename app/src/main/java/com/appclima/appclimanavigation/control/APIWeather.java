@@ -98,6 +98,12 @@ public class APIWeather extends Activity {
         this.myContext = myContext;
     }
 
+    public APIWeather(String cityName, Context myContext) {
+        this.cityName = cityName;
+        this.locationType = 3; // to know if its fav, GPS or default
+        this.myContext = myContext;
+    }
+
     public APIWeather(Context myContext) {
         this.myContext = myContext;
     }
