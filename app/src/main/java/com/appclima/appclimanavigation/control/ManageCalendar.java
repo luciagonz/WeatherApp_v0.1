@@ -462,6 +462,14 @@ public class ManageCalendar {
         ManageCalendar.createEventCalendarAccount = createEventCalendarAccount;
     }
 
+    public static String getRecurringRuleEvent() {
+        return recurringRuleEvent;
+    }
+
+    public static void setRecurringRuleEvent(String recurringRuleEvent) {
+        ManageCalendar.recurringRuleEvent = recurringRuleEvent;
+    }
+
     public void openNewEventDialogOnClick() {
         Log.d("Button clicked", "New event - Home");
         // custom dialog with all text, switch and buttons:
@@ -513,9 +521,29 @@ public class ManageCalendar {
         final Switch allDaySwitch = newEventDialog.findViewById(R.id.all_day_event_switch);
         changeAllDaySwitch(allDaySwitch);
 
+        System.out.println("All day event? " + createEventAllDayChecked);
+        System.out.println("Recurring event: " + recurringRuleEvent);
+
+        if (createEventAllDayChecked) {
+            allDaySwitch.setChecked(true);
+        }
+
+        else {
+            allDaySwitch.setChecked(false);
+        }
+
 
         // Change switch state depending on recurring event attribute
         final Switch recurringEventSwitch = newEventDialog.findViewById(R.id.recurring_event_switch);
+
+        if (recurringRuleEvent == null) {
+            recurringEventSwitch.setChecked(false);
+        }
+
+        else {
+            recurringEventSwitch.setChecked(true);
+        }
+
         recurringEventSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -663,6 +691,7 @@ public class ManageCalendar {
             }
         });
     }
+
 
 }
 

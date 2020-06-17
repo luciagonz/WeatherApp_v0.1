@@ -268,7 +268,7 @@ public class VoiceCommands extends MainActivity {
             }
 
             // DEFAULT LOCATION QUERIES
-            else if (speechRecognised.get(i).contains("location")) {
+            else if (speechRecognised.get(i).contains("location") && !speechRecognised.get(i).contains("event")) {
                 if ((speechRecognised.get(i).contains("tell") || speechRecognised.get(i).contains("give") || speechRecognised.get(i).contains("check")) && speechRecognised.get(i).contains("default")) {
                     ManagePreferences managePreferences = new ManagePreferences(myContext);
                     String defaultLocation = managePreferences.getDefaultLocation();
@@ -467,8 +467,19 @@ public class VoiceCommands extends MainActivity {
 
                     }
 
+                    if (getAttributeEvent(speechRecognised.get(i), " named ") != null) {
+                        name = getAttributeEvent(speechRecognised.get(i), " name ");
+
+                    }
+
                     if (getAttributeEvent(speechRecognised.get(i), " description ") != null) {
                         description = getAttributeEvent(speechRecognised.get(i), " description ");
+
+                    }
+
+
+                    if (getAttributeEvent(speechRecognised.get(i), "location") != null) {
+                        location = getAttributeEvent(speechRecognised.get(i), " location ");
 
                     }
 
@@ -530,7 +541,8 @@ public class VoiceCommands extends MainActivity {
                         System.out.println("Event for tomorrow");
                         manageCalendar.createEvent(startDate, endDate,name, description,location ,recurringRule);
                         fragmentDisplayed = "calendar";
-                        speechReplayed = "New event for tomorrow created";
+                        speechReplayed = "New event for tomorrow created with attributes: name = " + name + " description = " + description +
+                        " location " + location + " start at " + startDate.getTime().getHours() + " ends at " + endDate.getTime().getHours();
                         isSpeechRecognised = true;
                         break;
                     }
@@ -542,15 +554,19 @@ public class VoiceCommands extends MainActivity {
                         System.out.println("Event for tomorrow");
                         manageCalendar.createEvent(startDate, endDate,name, description,location ,recurringRule);
                         fragmentDisplayed = "calendar";
-                        speechReplayed = "New event for today created";
+                        speechReplayed = "New event for today created with attributes: name = " + name + " description = " + description +
+                                " location " + location + " start at " + startDate.getTime().getHours() + " ends at " + endDate.getTime().getHours();
                         isSpeechRecognised = true;
                         break;
 
                     } else {
                         fragmentDisplayed = "calendar";
-                        speechReplayed = "Please, enter event infromation and press OK button to create the event";
+                        speechReplayed = "Please, enter event information and press OK button to create the event";
                         ManageCalendar manageCalendar = new ManageCalendar(myContext, myActivity);
+                        manageCalendar.setCreateEventAllDayChecked(allDayEvent);
+                        manageCalendar.setRecurringRuleEvent(recurringRule);
                         manageCalendar.openNewEventDialogOnClick();
+
 
                         isSpeechRecognised = true;
                         break;
