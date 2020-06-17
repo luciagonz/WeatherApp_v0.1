@@ -1,5 +1,6 @@
 package com.appclima.appclimanavigation.control;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -54,13 +55,12 @@ public class SpeechRecognition extends MainActivity {
         this.recognisedSpeechReplay = voiceCommands;
         // Ensures audio permission is granted:
         audioPermission = new ManagePermissions(myActivity, myContext);
-        audioPermission.permissionManager(AUDIO_PERMISSION, AUDIO_PERMISSION_REQUEST_CODE);
+        audioPermission.requestAudioPermission();
 
-        System.out.println("audio permission is enabled? " + audioPermission.isPermissionEnabled());
 
         // SPEECH RECOGNITION SETTINGS
         // If audio permission is granted:
-        if (audioPermission.isPermissionEnabled() == true) {
+        if (audioPermission.isPermissionEnabled(Manifest.permission.RECORD_AUDIO) == true) {
 
             // Creates intent to recognise speech
             Intent speechIntent;
@@ -113,7 +113,7 @@ public class SpeechRecognition extends MainActivity {
 
         // If audio permission is not granted, request it to the user:
         else {
-            audioPermission.permissionManager(AUDIO_PERMISSION, AUDIO_PERMISSION_REQUEST_CODE);
+            audioPermission.requestAudioPermission();
         }
     }
 

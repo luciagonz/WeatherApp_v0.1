@@ -33,6 +33,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -49,23 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private ManageLocation locationService;
     private FusedLocationProviderClient myFusedLocationClient;
 
-    // Required permissions and request codes defined:
-    private ManagePermissions permissionRequestManager;
-    public static final String AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO;
-    public static final String LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION;
-    public static final String LOCATION_COARSE_PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION;
-    public static final String WRITE_CALENDAR_PERMISSION = Manifest.permission.WRITE_CALENDAR;
-    public static final String READ_CALENDAR_PERMISSION = Manifest.permission.READ_CALENDAR;
-    public static final String INTERNET_NETWORK_STATE = Manifest.permission.ACCESS_NETWORK_STATE;
-    public static final String INTERNET_PERMISSION = Manifest.permission.INTERNET;
-
-    public static final int AUDIO_PERMISSION_REQUEST_CODE = 1;
-    public static final int LOCATION_FINE_PERMISSION_REQUEST_CODE = 2;
-    public static final int LOCATION_COARSE_PERMISSION_REQUEST_CODE = 3;
-    public static final int WRITE_CALENDAR_PERMISSION_REQUEST_CODE = 4;
-    public static final int READ_CALENDAR_PERMISSION_REQUEST_CODE = 5;
-    public static final int INTERNET_NETWORK_STATE_REQUEST_CODE = 6;
-    public static final int INTERNET_PERMISSION_REQUEST_CODE = 7;
 
     // Manage calendar
     private boolean allowRefresh;
@@ -74,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     // Model Array data:
     public ArrayList<CalendarEvents> calendarEventsArray;
     public ArrayList<Chat> voiceMessages;
+    public long setDateCalendar;
+    public boolean tomorrowDate;
 
 
     // ACTIVITY CYCLE LIFE METHODS:
@@ -98,9 +85,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        // Check if permissions are granted:
-        checkPermissions();
-
         // Initialize main services:
         initializeLocation(); // location service
         speechRecognition = new SpeechRecognition(this, this); // voice recognition service
@@ -112,12 +96,8 @@ public class MainActivity extends AppCompatActivity {
         voiceMessages = new ArrayList<>();
         Chat message1 = new Chat("Welcome to your voice assistant, I'm here to help you", 0);
         voiceMessages.add(message1);
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        permissionRequestManager.requestPermissionResponse(requestCode, permissions, grantResults);
+        setDateCalendar = System.currentTimeMillis();
     }
 
 
@@ -208,22 +188,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // Method to check all permissions needed
-    private void checkPermissions() {
-        // Check permissions
-        permissionRequestManager = new ManagePermissions(this, this);
-
-        // Request permissions:
-        permissionRequestManager.permissionManager(LOCATION_PERMISSION, LOCATION_FINE_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager(LOCATION_COARSE_PERMISSION, LOCATION_COARSE_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager(AUDIO_PERMISSION, AUDIO_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager(WRITE_CALENDAR_PERMISSION, WRITE_CALENDAR_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager(READ_CALENDAR_PERMISSION, READ_CALENDAR_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager(INTERNET_NETWORK_STATE, INTERNET_NETWORK_STATE_REQUEST_CODE);
-        permissionRequestManager.permissionManager(INTERNET_PERMISSION, INTERNET_PERMISSION_REQUEST_CODE);
-
-
-    }
 
     // Method to initialize location updates:
     public void initializeLocation(){
@@ -269,15 +233,6 @@ public class MainActivity extends AppCompatActivity {
         this.myFusedLocationClient = myFusedLocationClient;
     }
 
-    public ManagePermissions getPermissionRequestManager() {
-        return permissionRequestManager;
-    }
-
-    public void setPermissionRequestManager(ManagePermissions permissionRequest) {
-        this.permissionRequestManager = permissionRequest;
-    }
-
-
 
     public ArrayList<CalendarEvents> getCalendarEventsArray() {
         return calendarEventsArray;
@@ -295,6 +250,15 @@ public class MainActivity extends AppCompatActivity {
         this.voiceMessages = voiceMessages;
     }
 
+    public long getSetDateCalendar() {
+        System.out.println("Get calendar date to " + new Date(setDateCalendar));
+        return setDateCalendar;
+    }
+
+    public void setSetDateCalendar(long setDateCalendar) {
+        this.setDateCalendar = setDateCalendar;
+
+    }
 
     public boolean isAllowRefresh() {
         return allowRefresh;

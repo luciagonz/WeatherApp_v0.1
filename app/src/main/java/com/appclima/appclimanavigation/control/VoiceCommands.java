@@ -214,6 +214,7 @@ public class VoiceCommands extends MainActivity {
                     }
 
                 } else {
+                    System.out.println("Unknown query");
                     fragmentDisplayed = "voice";
                     speechReplayed = "Sorry, I didn't understand you, could you please repeat the question?";
                     isSpeechRecognised = false;
@@ -315,6 +316,7 @@ public class VoiceCommands extends MainActivity {
                         break;
 
                     } else {
+                        System.out.println("Unknown query");
                         fragmentDisplayed = "voice";
                         speechReplayed = "Sorry, I didn't understand you, could you please repeat the question?";
                         isSpeechRecognised = false;
@@ -334,14 +336,14 @@ public class VoiceCommands extends MainActivity {
                     break;
 
                 } else {
-                    fragmentDisplayed = "location";
+                    fragmentDisplayed = "user";
                     speechReplayed = "Here is your setting screen with your location";
                     isSpeechRecognised = true;
-                    continue;
+                    break;
                 }
 
             } else if (speechRecognised.get(i).contains("where") || speechRecognised.get(i).contains("place")) {
-                fragmentDisplayed = "location";
+                fragmentDisplayed = "user";
                 locationManagerService.getMyLastCoordinates();
                 String myPlace = locationManagerService.getMyPlace();
                 speechReplayed = "You are in " + myPlace;
@@ -377,7 +379,7 @@ public class VoiceCommands extends MainActivity {
                      }
 
                     else {
-
+                        System.out.println("Unknown query");
                         fragmentDisplayed = "voice";
                         speechReplayed = "Sorry, I didn't understand you, could you please repeat the question?";
                         isSpeechRecognised = false;
@@ -535,6 +537,7 @@ public class VoiceCommands extends MainActivity {
 
                         endDate.add(Calendar.HOUR, 24);
                         startDate.add(Calendar.HOUR, 24);
+                        managePreferences.setTomorrowDateFlag("true");
                         ManageCalendar manageCalendar = new ManageCalendar(myContext, myActivity);
                         manageCalendar.setCreateEventAllDayChecked(allDayEvent);
                         manageCalendar.setCreateEventCalendarAccount(1);
@@ -548,6 +551,7 @@ public class VoiceCommands extends MainActivity {
                     }
 
                     if (speechRecognised.get(i).contains("today")) {
+                        setDateCalendar = startDate.getTimeInMillis();
                         ManageCalendar manageCalendar = new ManageCalendar(myContext, myActivity);
                         manageCalendar.setCreateEventAllDayChecked(allDayEvent);
                         manageCalendar.setCreateEventCalendarAccount(1);
@@ -586,12 +590,17 @@ public class VoiceCommands extends MainActivity {
             // UNKNOWN QUERY
 
             else {
+                System.out.println("Unknown query");
                 fragmentDisplayed = "voice";
                 speechReplayed = "Sorry, I didn't understand you, could you please repeat the question?";
                 isSpeechRecognised = false;
                 continue;
             }
         }
+
+        System.out.println("fragment: " + fragmentDisplayed);
+        System.out.println("speech: " + speechReplayed);
+        System.out.println("recognised?" + isSpeechRecognised);
 
     }
 

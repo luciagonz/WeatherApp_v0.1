@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.appclima.appclimanavigation.R;
@@ -43,9 +44,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-
-import static com.appclima.appclimanavigation.presentation.activities.MainActivity.READ_CALENDAR_PERMISSION_REQUEST_CODE;
-import static com.appclima.appclimanavigation.presentation.activities.MainActivity.WRITE_CALENDAR_PERMISSION_REQUEST_CODE;
 
 public class ManageCalendar {
 
@@ -71,10 +69,10 @@ public class ManageCalendar {
     private ArrayList<String> recurringRule;
 
 
-    private  ArrayList<Integer> calendarListID;
-    private  ArrayList<String> calendarListAccount;
-    private  ArrayList<String> calendarListName;
-    private  ArrayList<Integer> calendarListColor;
+    private ArrayList<Integer> calendarListID;
+    private ArrayList<String> calendarListAccount;
+    private ArrayList<String> calendarListName;
+    private ArrayList<Integer> calendarListColor;
 
     private static boolean createEventAllDayChecked = false;
     private static int createEventCalendarAccount;
@@ -92,7 +90,6 @@ public class ManageCalendar {
     // https://developer.android.com/reference/android/provider/CalendarContract.Events
 
 
-
     public void calendarInformation() {
 
         calendarListID = new ArrayList<>();
@@ -108,13 +105,6 @@ public class ManageCalendar {
         String selection = "(" + CalendarContract.Calendars.ACCOUNT_TYPE + " = ?)";
         String[] selectionArgs = new String[]{"com.google"};
 
-        // If permissions read permission is not granted, ask for it:
-        if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            ManagePermissions managePermissions = new ManagePermissions(myActivity, myContext);
-            managePermissions.permissionManager(MainActivity.READ_CALENDAR_PERMISSION, MainActivity.READ_CALENDAR_PERMISSION_REQUEST_CODE);
-
-            return;
-        }
 
         // construct query parameters asked:
         String[] EVENT_PROJECTION = new String[]{
@@ -124,20 +114,33 @@ public class ManageCalendar {
                 CalendarContract.Calendars.CALENDAR_COLOR            // 3
         };
 
-        // Make query
-        cursor = cr.query(uri, EVENT_PROJECTION, selection, selectionArgs, null);
+        ManagePermissions managePermissions = new ManagePermissions(myActivity, myContext);
+        boolean readCalendarPermissionGranted = managePermissions.isPermissionEnabled(Manifest.permission.READ_CALENDAR);
+        boolean writeCalendarPermissionGranted = managePermissions.isPermissionEnabled(Manifest.permission.WRITE_CALENDAR);
 
 
-        // Use the cursor to step through the returned records
-        while (cursor.moveToNext()) {
 
-            // Get the field values and add them to arrays:
-            calendarListID.add((int)(cursor.getLong(0)));
-            calendarListAccount.add(cursor.getString(1));
-            calendarListName.add(cursor.getString(2));
-            calendarListColor.add(0xff000000 + cursor.getInt(3));
+        if (readCalendarPermissionGranted && writeCalendarPermissionGranted) {
+            cursor = cr.query(Uri.parse("content://com.android.calendar/events"), EVENT_PROJECTION, selection, selectionArgs, null);
 
+
+            // Use the cursor to step through the returned records
+            while (cursor.moveToNext()) {
+
+                // Get the field values and add them to arrays:
+                calendarListID.add((int)(cursor.getLong(0)));
+                calendarListAccount.add(cursor.getString(1));
+                calendarListName.add(cursor.getString(2));
+                calendarListColor.add(0xff000000 + cursor.getInt(3));
+
+            }
         }
+
+        else {
+            managePermissions.requestCalendarPermissions();
+        }
+
+
 
 
     }
@@ -183,10 +186,14 @@ public class ManageCalendar {
         endOfDay.setTime(date_end);
 
 
+        ManagePermissions managePermissions = new ManagePermissions(myActivity, myContext);
+        boolean readCalendarPermissionGranted = managePermissions.isPermissionEnabled(Manifest.permission.READ_CALENDAR);
+        boolean writeCalendarPermissionGranted = managePermissions.isPermissionEnabled(Manifest.permission.WRITE_CALENDAR);
 
-        System.out.println("Events for today from " + beginOfDay.getTimeInMillis() + " until " + endOfDay.getTimeInMillis());
-        
-        Cursor cursor_day_events = myContext.getContentResolver()
+
+
+        if (readCalendarPermissionGranted && writeCalendarPermissionGranted) {
+            Cursor cursor_day_events = myContext.getContentResolver()
                     .query(Uri.parse("content://com.android.calendar/events"),
                             new String[] { "calendar_id", "title", "description", "dtstart", "dtend","eventTimezone", "eventLocation", "allDay", "_id", "rrule"},
                             "( dtstart >=" + beginOfDay.getTimeInMillis() + " and dtstart <=" + endOfDay.getTimeInMillis() + " AND deleted != 1 )",
@@ -195,72 +202,77 @@ public class ManageCalendar {
 
 
 
-        cursor_day_events.moveToFirst();
+            cursor_day_events.moveToFirst();
 
-        // fetching calendars name
-        String CNames[] = new String[cursor_day_events.getCount()];
+            // fetching calendars name
+            String CNames[] = new String[cursor_day_events.getCount()];
 
-        // fetching calendars id
-        nameOfEvent.clear();
-        startDates.clear();
-        endDates.clear();
-        descriptions.clear();
-        calendarID.clear();
-        eventLocation.clear();
-        allDayFlagEvent.clear();
-        eventColor.clear();
-        weatherDescriptionEvent.clear();
-        eventID.clear();
-        calendarName.clear();
-        recurringRule.clear();
+            // fetching calendars id
+            nameOfEvent.clear();
+            startDates.clear();
+            endDates.clear();
+            descriptions.clear();
+            calendarID.clear();
+            eventLocation.clear();
+            allDayFlagEvent.clear();
+            eventColor.clear();
+            weatherDescriptionEvent.clear();
+            eventID.clear();
+            calendarName.clear();
+            recurringRule.clear();
 
-        for (int i = 0; i < CNames.length; i++) {
+            for (int i = 0; i < CNames.length; i++) {
 
-            nameOfEvent.add(cursor_day_events.getString(1));
-            descriptions.add(cursor_day_events.getString(2));
-            startDates.add(getDate(cursor_day_events.getLong(3), "dd/MM/yyyy HH:mm:ss a"));
-            endDates.add(getDate(cursor_day_events.getLong(4), "dd/MM/yyyy HH:mm:ss a"));
-            calendarID.add((int)cursor_day_events.getLong(0));
-            eventID.add((int)cursor_day_events.getLong(8));
-            recurringRule.add(cursor_day_events.getString(9));
+                nameOfEvent.add(cursor_day_events.getString(1));
+                descriptions.add(cursor_day_events.getString(2));
+                startDates.add(getDate(cursor_day_events.getLong(3), "dd/MM/yyyy HH:mm:ss a"));
+                endDates.add(getDate(cursor_day_events.getLong(4), "dd/MM/yyyy HH:mm:ss a"));
+                calendarID.add((int)cursor_day_events.getLong(0));
+                eventID.add((int)cursor_day_events.getLong(8));
+                recurringRule.add(cursor_day_events.getString(9));
 
 
-            for (int j = 0; j < calendarListID.size(); j++) {
+                for (int j = 0; j < calendarListID.size(); j++) {
 
-                if (calendarID.get(i).equals(calendarListID.get(j))) {
-                    eventColor.add(calendarListColor.get(j));
-                    calendarName.add(calendarListAccount.get(j).split("@")[0]);
+                    if (calendarID.get(i).equals(calendarListID.get(j))) {
+                        eventColor.add(calendarListColor.get(j));
+                        calendarName.add(calendarListAccount.get(j).split("@")[0]);
+                    }
                 }
-            }
 
-            eventLocation.add(cursor_day_events.getString(6));
+                eventLocation.add(cursor_day_events.getString(6));
 
-            String city = cursor_day_events.getString(6).split(",")[0];
+                String city = cursor_day_events.getString(6).split(",")[0];
 
-            if (!city.isEmpty()) {
-                APIWeather apiWeather = new APIWeather(city, 3, myContext);
-                apiWeather.manageInformationRequest(true);
-                weatherDescriptionEvent.add(apiWeather.getCurrentTimeDescription());
+                if (!city.isEmpty()) {
+                    APIWeather apiWeather = new APIWeather(city, 3, myContext);
+                    apiWeather.manageInformationRequest(true);
+                    weatherDescriptionEvent.add(apiWeather.getCurrentTimeDescription());
 
-            }
+                }
 
-            else {
-                System.out.println("Event without Location");
-                weatherDescriptionEvent.add("");
-            }
-
+                else {
+                    System.out.println("Event without Location");
+                    weatherDescriptionEvent.add("");
+                }
 
 
 
-            // all_day = true (1), all_day = false (0)
-            if (cursor_day_events.getString(7).contains("1")) { allDayFlagEvent.add(true); }
+
+                // all_day = true (1), all_day = false (0)
+                if (cursor_day_events.getString(7).contains("1")) { allDayFlagEvent.add(true); }
 
                 else { allDayFlagEvent.add(false); }
 
-            cursor_day_events.moveToNext();
+                cursor_day_events.moveToNext();
+
+            }
 
         }
 
+        else {
+            managePermissions.requestCalendarPermissions();
+        }
 
         CalendarEvents calendarEvents = new CalendarEvents(nameOfEvent,
                 startDates, endDates, descriptions,
@@ -268,6 +280,7 @@ public class ManageCalendar {
 
 
         return calendarEvents;
+
     }
 
     public static void deleteEvent(int eventID, int calendarID) {
@@ -572,6 +585,7 @@ public class ManageCalendar {
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 createEvent(startDate, endDate,
                         eventName.getText().toString(), eventDescription.getText().toString(),
                         locationEvent.getText().toString(), recurringRuleEvent);

@@ -355,6 +355,11 @@ public class HomeFragment extends Fragment {
                 positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        myActivity.setSetDateCalendar(startDate.getTimeInMillis());
+                        ManagePreferences managePreferences = new ManagePreferences(getContext());
+                        managePreferences.setTomorrowDateFlag("false");
+
                         manageCalendar.createEvent(startDate, endDate,
                                 eventName.getText().toString(), eventDescription.getText().toString(),
                                 locationEvent.getText().toString(), recurringRule);

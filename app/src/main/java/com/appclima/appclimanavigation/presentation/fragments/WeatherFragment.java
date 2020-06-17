@@ -15,13 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.appclima.appclimanavigation.R;
 import com.appclima.appclimanavigation.control.APIWeather;
 import com.appclima.appclimanavigation.control.ManagePreferences;
-import com.appclima.appclimanavigation.model.CalendarEvents;
 import com.appclima.appclimanavigation.model.Cities;
 import com.appclima.appclimanavigation.model.ForecastCity;
-import com.appclima.appclimanavigation.model.MyPrefs;
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
-import com.appclima.appclimanavigation.presentation.cardviews.CalendarEventCard;
-import com.appclima.appclimanavigation.presentation.cardviews.WeatherCityCard;
 import com.appclima.appclimanavigation.presentation.cardviews.WeatherScreenCityCard;
 
 import java.util.ArrayList;
@@ -36,7 +32,6 @@ public class WeatherFragment extends Fragment {
     ArrayList<Cities> cityList;
     ArrayList<ForecastCity> cityForecastList;
     MainActivity myActivity;
-    MyPrefs myPreferences;
 
 
     // Empty constructor:

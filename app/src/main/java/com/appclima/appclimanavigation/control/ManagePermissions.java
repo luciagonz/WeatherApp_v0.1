@@ -1,5 +1,6 @@
 package com.appclima.appclimanavigation.control;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -10,15 +11,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.appclima.appclimanavigation.presentation.activities.MainActivity;
+import com.appclima.appclimanavigation.utilities.PermissionsConstants;
 
 
-public class ManagePermissions extends MainActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class ManagePermissions implements ActivityCompat.OnRequestPermissionsResultCallback {
 
+    // Required permissions and request codes defined:
     private Activity myActivity;
     private boolean permissionEnabled = false;
-    private String permissionRequest;
     private Context myContext;
-    private Integer requestCodePermission = null;
 
 
 
@@ -28,44 +29,85 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
     }
 
 
-    // Check if are granted or not, and ask for them if are not:
-    public void permissionManager(String permission, int request_code) {
+    public void requestCalendarPermissions() {
 
-        setPermissionRequest(permission);
-        setRequestCodePermission(request_code);
-
-        if (ActivityCompat.checkSelfPermission(myContext, permissionRequest) == PackageManager.PERMISSION_GRANTED) {
-            permissionEnabled = true;
-            System.out.println(permissionRequest + "is granted");
+        if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(myContext, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(myActivity, new String[]{Manifest.permission.READ_CALENDAR,
+                    Manifest.permission.WRITE_CALENDAR}, PermissionsConstants.READ_CALENDAR_PERMISSION_REQUEST_CODE);
+        } else if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(myContext, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
         }
 
+    }
+
+    public void requestLocationPermissions() {
+
+        if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(myActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, PermissionsConstants.LOCATION_FINE_PERMISSION_REQUEST_CODE);
+
+        } else if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        }
+
+    }
+
+
+    public void requestInternetPermission() {
+
+        if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(myActivity, new String[]{Manifest.permission.INTERNET,
+                    Manifest.permission.ACCESS_NETWORK_STATE}, PermissionsConstants.INTERNET_PERMISSION_REQUEST_CODE);
+
+        } else if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
+        }
+
+    }
+
+    public void requestAudioPermission() {
+
+        if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(myActivity, new String[]{Manifest.permission.RECORD_AUDIO}, PermissionsConstants.AUDIO_PERMISSION_REQUEST_CODE);
+
+        } else if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+        }
+
+    }
+
+
+
+    // GETTTERS AND SETTERS:
+
+    public boolean isPermissionEnabled(String permission) {
+        if (ActivityCompat.checkSelfPermission(myContext, permission) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
         else {
 
-            permissionEnabled = false;
-            System.out.println(permissionRequest + "is NOT granted");
-            System.out.println("Request permission " + permissionRequest);
-            ActivityCompat.requestPermissions(myActivity, new String[]{permissionRequest},requestCodePermission);
-
-
+            return false;
         }
     }
 
 
-    public void requestPermissionResponse (int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
-            case LOCATION_FINE_PERMISSION_REQUEST_CODE:
+            case PermissionsConstants.LOCATION_FINE_PERMISSION_REQUEST_CODE:
                 System.out.println("Location fine request");
-                if (ContextCompat.checkSelfPermission(myContext, LOCATION_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(myContext, "Location fine granted", Toast.LENGTH_LONG).show();
                 } else {
 
                     Toast.makeText(myContext, "Location fine denied", Toast.LENGTH_LONG).show();
                 }
                 break;
-            case AUDIO_PERMISSION_REQUEST_CODE:
+            case PermissionsConstants.AUDIO_PERMISSION_REQUEST_CODE:
                 System.out.println("Audio request");
-                if (ContextCompat.checkSelfPermission(myContext, AUDIO_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(myContext, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(myContext, "Audio granted", Toast.LENGTH_LONG).show();
 
                 } else {
@@ -74,9 +116,9 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
                 }
                 break;
 
-            case LOCATION_COARSE_PERMISSION_REQUEST_CODE:
+            case PermissionsConstants.LOCATION_COARSE_PERMISSION_REQUEST_CODE:
                 System.out.println("Location coarse request");
-                if (ContextCompat.checkSelfPermission(myContext, LOCATION_COARSE_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(myContext, "Location coarse granted", Toast.LENGTH_LONG).show();
 
                 } else {
@@ -85,9 +127,9 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
                 }
                 break;
 
-            case READ_CALENDAR_PERMISSION_REQUEST_CODE:
+            case PermissionsConstants.READ_CALENDAR_PERMISSION_REQUEST_CODE:
                 System.out.println("Read calendar request");
-                if (ContextCompat.checkSelfPermission(myContext, READ_CALENDAR_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(myContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(myContext, "Calendar read granted", Toast.LENGTH_LONG).show();
 
                 } else {
@@ -96,9 +138,9 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
                 }
                 break;
 
-            case WRITE_CALENDAR_PERMISSION_REQUEST_CODE:
+            case PermissionsConstants.WRITE_CALENDAR_PERMISSION_REQUEST_CODE:
                 System.out.println("Write calendar request");
-                if (ContextCompat.checkSelfPermission(myContext, WRITE_CALENDAR_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(myContext, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(myContext, "Calendar write granted", Toast.LENGTH_LONG).show();
 
                 } else {
@@ -107,9 +149,9 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
                 }
                 break;
 
-            case INTERNET_NETWORK_STATE_REQUEST_CODE:
+            case PermissionsConstants.INTERNET_NETWORK_STATE_REQUEST_CODE:
                 System.out.println("Network request");
-                if (ContextCompat.checkSelfPermission(myContext, INTERNET_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(myContext, Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(myContext, "Network state granted", Toast.LENGTH_LONG).show();
 
                 } else {
@@ -118,60 +160,16 @@ public class ManagePermissions extends MainActivity implements ActivityCompat.On
                 }
                 break;
 
-            case INTERNET_PERMISSION_REQUEST_CODE:
-                System.out.println("Internet access request");
-                if (ContextCompat.checkSelfPermission(myContext, INTERNET_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(myContext, "Internet access granted", Toast.LENGTH_LONG).show();
+            case PermissionsConstants.INTERNET_PERMISSION_REQUEST_CODE:
+                System.out.println("Network request");
+                if (ContextCompat.checkSelfPermission(myContext, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(myContext, "Network state granted", Toast.LENGTH_LONG).show();
 
                 } else {
 
-                    Toast.makeText(myContext, "Internet access denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(myContext, "Network state denied", Toast.LENGTH_LONG).show();
                 }
                 break;
         }
-    }
-
-
-    // GETTTERS AND SETTERS:
-
-    public boolean isPermissionEnabled() {
-        return permissionEnabled;
-    }
-
-    public void setPermissionEnabled(boolean permissionEnabled) {
-        this.permissionEnabled = permissionEnabled;
-    }
-
-    public Activity getMyActivity() {
-        return myActivity;
-    }
-
-    public void setMyActivity(Activity myActivity) {
-        this.myActivity = myActivity;
-    }
-
-
-    public void setPermissionRequest(String permissionRequest) {
-        this.permissionRequest = permissionRequest;
-    }
-
-    public String getPermissionRequest() {
-        return permissionRequest;
-    }
-
-    public Context getMyContext() {
-        return myContext;
-    }
-
-    public void setMyContext(Context myContext) {
-        this.myContext = myContext;
-    }
-
-    public Integer getRequestCodePermission() {
-        return requestCodePermission;
-    }
-
-    public void setRequestCodePermission(Integer requestCodePermission) {
-        this.requestCodePermission = requestCodePermission;
     }
 }

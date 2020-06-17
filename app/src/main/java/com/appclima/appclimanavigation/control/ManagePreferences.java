@@ -102,6 +102,15 @@ public class ManagePreferences {
 
     // Getters and setters (manually generated)
 
+    public String getTomorrowDateFlag() {
+
+        return getPreferences("UserPrefs", "tomorrowDate");
+    }
+
+    public void setTomorrowDateFlag(String tomorrowDate) {
+        savePreferences("UserPrefs", "tomorrowDate", tomorrowDate, 3);
+    }
+
     public String getDefaultUnitTemperature() {
 
         return getPreferences("UserPrefs", "temperatureUnit");
@@ -211,6 +220,7 @@ public class ManagePreferences {
             setDefaultUnitWind("m/s");
             setUserName(name);
             setDefaultUnitTemperature("C");
+            setTomorrowDateFlag("false");
             savePreferences("UserPrefs", "citiesNames", defaultCity,3);
             savePreferences("UserPrefs", "citiesTypes", "2",3);
             savePreferences("UserPrefs", "onBoardingDone", "true",3);

@@ -1,5 +1,6 @@
 package com.appclima.appclimanavigation.presentation.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -15,6 +16,7 @@ import com.appclima.appclimanavigation.control.ManagePreferences;
 
 public class OnBoardingActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +28,11 @@ public class OnBoardingActivity extends AppCompatActivity {
         final EditText defaultCityOnBoarding = findViewById(R.id.onBoarding_city);
         final EditText defaultName = findViewById(R.id.onBoarding_name);
 
-        checkPermissions();
+        ManagePermissions managePermissions = new ManagePermissions(this, this);
+        managePermissions.requestCalendarPermissions();
+        managePermissions.requestAudioPermission();
+        managePermissions.requestInternetPermission();
+        managePermissions.requestLocationPermissions();
 
 
 
@@ -48,17 +54,10 @@ public class OnBoardingActivity extends AppCompatActivity {
         });
     }
 
-    private void checkPermissions() {
-        // Check permissions
-        ManagePermissions permissionRequestManager = new ManagePermissions(this, this);
 
-        // Request permissions:
-        permissionRequestManager.permissionManager(MainActivity.LOCATION_PERMISSION, MainActivity.LOCATION_FINE_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager(MainActivity.LOCATION_COARSE_PERMISSION, MainActivity.LOCATION_COARSE_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager(MainActivity.AUDIO_PERMISSION, MainActivity.AUDIO_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager(MainActivity.WRITE_CALENDAR_PERMISSION, MainActivity.WRITE_CALENDAR_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager(MainActivity.READ_CALENDAR_PERMISSION, MainActivity.READ_CALENDAR_PERMISSION_REQUEST_CODE);
-        permissionRequestManager.permissionManager(MainActivity.INTERNET_NETWORK_STATE, MainActivity.INTERNET_NETWORK_STATE_REQUEST_CODE);
-        permissionRequestManager.permissionManager(MainActivity.INTERNET_PERMISSION, MainActivity.INTERNET_PERMISSION_REQUEST_CODE);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
 }

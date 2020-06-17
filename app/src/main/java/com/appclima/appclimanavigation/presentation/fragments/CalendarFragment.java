@@ -57,6 +57,7 @@ public class CalendarFragment extends Fragment {
     Button addEventButton;
     boolean recurringEvent = false;
     String recurringRule = null;
+    ManagePreferences managePreferences;
 
 
 
@@ -67,6 +68,7 @@ public class CalendarFragment extends Fragment {
         Log.d("Calendar Fragment", "onCreate Method");
         // this fragments is part of main activity
         myActivity = (MainActivity) getActivity();
+        managePreferences= new ManagePreferences(getContext());
 
 
     }
@@ -98,12 +100,28 @@ public class CalendarFragment extends Fragment {
 
         // Find calendar on Calendar Fragment by ID:
         calendarWidget = (CalendarView) calendarView.findViewById(R.id.calendar_view_widget);
+        calendarWidget.setDate(myActivity.getSetDateCalendar(),false,true);
         titleCalendarEvents = (TextView) calendarView.findViewById(R.id.title_calendar_events);
         addEventButton = calendarView.findViewById(R.id.add_event_calendar_button);
         setFirstDay();
 
         // Get event list first time:
-        selectedDate = Calendar.getInstance().getTime();
+
+        System.out.println("Tomorrow event flag" + managePreferences.getTomorrowDateFlag());
+        if (managePreferences.getTomorrowDateFlag().contains("true")) {
+            System.out.println("Tomorrow calendar showed");
+            selectedDate = new Date((new Date()).getTime() + (1000*60 * 60 * 24));
+        }
+
+        else  {
+            System.out.println("Other day calendar showed");
+            selectedDate = Calendar.getInstance().getTime();
+            selectedDate.setTime(myActivity.getSetDateCalendar());
+        }
+
+        System.out.println("Calendar date " + selectedDate);
+        calendarWidget.setDate(selectedDate.getTime());
+        System.out.println(" date calendar" + calendarWidget.getDate());
         getCalendarEvents(selectedDate);
         // Get event list when user changes the day:
         onChangeSelectedDay();
@@ -127,7 +145,10 @@ public class CalendarFragment extends Fragment {
                 calendarDate.set(Calendar.MONTH, month);
                 calendarDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 selectedDate = calendarDate.getTime();
+                myActivity.setSetDateCalendar(selectedDate.getTime());
                 getCalendarEvents(selectedDate);
+                managePreferences.setTomorrowDateFlag("false");
+
             }
         });
     }
@@ -316,6 +337,10 @@ public class CalendarFragment extends Fragment {
                 positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        myActivity.setSetDateCalendar(startDate.getTimeInMillis());
+                        managePreferences.setTomorrowDateFlag("false");
+
                         manageCalendar.createEvent(startDate, endDate,
                                 eventName.getText().toString(), eventDescription.getText().toString(),
                                 locationEvent.getText().toString(),recurringRule);
