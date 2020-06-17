@@ -1,4 +1,5 @@
 package com.appclima.appclimanavigation.control;
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -364,98 +365,109 @@ public class APIWeather extends Activity {
     // GET current weather information as JSON Object
     private JSONObject getWeatherInformationFromApi(int queryType) {
 
-        // avoid error:
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        ManagePermissions managePermissions = new ManagePermissions(this, myContext);
+        managePermissions.requestInternetPermission();
+
+        if (managePermissions.isPermissionEnabled(Manifest.permission.INTERNET)) {
+            // avoid error:
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
 
 
-        try {
-            switch (queryType) {
-                // Create url according to query type request (encode IOexception if fails)
-                case CURRENT_WEATHER_CITY_NAME:
-                    System.out.println("Current weather request, request type: " + queryType);
-                    urlRequest = new URL(BASE_URL_CURRENT_WEATHER + URLEncoder.encode(cityName, "utf-8") + "&appid=" + API_KEY);
-                    break;
+            try {
+                switch (queryType) {
+                    // Create url according to query type request (encode IOexception if fails)
+                    case CURRENT_WEATHER_CITY_NAME:
+                        System.out.println("Current weather request, request type: " + queryType);
+                        urlRequest = new URL(BASE_URL_CURRENT_WEATHER + URLEncoder.encode(cityName, "utf-8") + "&appid=" + API_KEY);
+                        break;
 
-                case FORECAST_WEATHER_CITY_NAME:
-                    System.out.println("Forecast weather request" +  queryType);
-                    urlRequest = new URL(BASE_URL_FORECAST_WEATHER + URLEncoder.encode(cityName, "utf-8") + "&appid=" + API_KEY);
-                    break;
+                    case FORECAST_WEATHER_CITY_NAME:
+                        System.out.println("Forecast weather request" +  queryType);
+                        urlRequest = new URL(BASE_URL_FORECAST_WEATHER + URLEncoder.encode(cityName, "utf-8") + "&appid=" + API_KEY);
+                        break;
 
-                default:
-                    // Debug purpose:
-                    urlRequest = new URL("http://api.openweathermap.org/data/2.5/weather?q=London");
-            }
+                    default:
+                        // Debug purpose:
+                        urlRequest = new URL("http://api.openweathermap.org/data/2.5/weather?q=London");
+                }
 
-            Log.d("URL request: ", urlRequest.toString());
+                Log.d("URL request: ", urlRequest.toString());
 
-            // Connect to the service and set timeouts:
-            HttpURLConnection connection = (HttpURLConnection) urlRequest.openConnection();
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(15000);
-            connection.setRequestMethod("GET");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.connect();
+                // Connect to the service and set timeouts:
+                HttpURLConnection connection = (HttpURLConnection) urlRequest.openConnection();
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
+                connection.setRequestMethod("GET");
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.connect();
 
-            // Get response:
-            InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                // Get response:
+                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-            // debug purpose:
-            System.out.println(bufferedReader.toString());
+                // debug purpose:
+                System.out.println(bufferedReader.toString());
 
-            // Convert text to JSON:
-            StringBuffer jsonResponse = new StringBuffer(2048);
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
+                // Convert text to JSON:
+                StringBuffer jsonResponse = new StringBuffer(2048);
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
 
-                jsonResponse.append(line + "\n");
+                    jsonResponse.append(line + "\n");
 
-            }
+                }
 
-            bufferedReader.close();
-            inputStreamReader.close();
-            connection.disconnect();
+                bufferedReader.close();
+                inputStreamReader.close();
+                connection.disconnect();
 
-            // Create JSON Object:
-            JSONObject weatherData = new JSONObject(jsonResponse.toString());
+                // Create JSON Object:
+                JSONObject weatherData = new JSONObject(jsonResponse.toString());
 
 
-            // Show all information in console to check it its correct (console max output: 4000, which is not enough for forecast information)
-            if (String.valueOf(weatherData).length() > 4000) {
-                Log.v("Weather data API lenght", "sb.length = " + String.valueOf(weatherData).length());
-                int divisions = String.valueOf(weatherData).length() / 4000;
-                for (int i = 0; i <= divisions; i++) {
-                    int max = 4000 * (i + 1);
-                    if (max >= String.valueOf(weatherData).length()) {
-                        Log.v("Weather data", "Part " + i + " of " + divisions + ":" + String.valueOf(weatherData).substring(4000 * i));
-                    } else {
-                        Log.v("Weather data", "Part " + i + " of " + divisions + ":" + String.valueOf(weatherData).substring(4000 * i, max));
+                // Show all information in console to check it its correct (console max output: 4000, which is not enough for forecast information)
+                if (String.valueOf(weatherData).length() > 4000) {
+                    Log.v("Weather data API lenght", "sb.length = " + String.valueOf(weatherData).length());
+                    int divisions = String.valueOf(weatherData).length() / 4000;
+                    for (int i = 0; i <= divisions; i++) {
+                        int max = 4000 * (i + 1);
+                        if (max >= String.valueOf(weatherData).length()) {
+                            Log.v("Weather data", "Part " + i + " of " + divisions + ":" + String.valueOf(weatherData).substring(4000 * i));
+                        } else {
+                            Log.v("Weather data", "Part " + i + " of " + divisions + ":" + String.valueOf(weatherData).substring(4000 * i, max));
+                        }
                     }
                 }
+
+                if (weatherData == null) {
+
+                    Log.d("API Request: ", "City is not valid");
+
+                    validRequest = false;
+                }
+
+                else {
+
+                    Log.d("API Request: ", "JSON Object obtained");
+                    validRequest = true;
+                }
+
+                return weatherData;
             }
 
-            if (weatherData == null) {
-
-                Log.d("API Request: ", "City is not valid");
-
+            catch(Throwable t) {
+                Log.d("API Request: ", "Exception!");
+                t.printStackTrace();
                 validRequest = false;
+                return null;
             }
-
-            else {
-
-                Log.d("API Request: ", "JSON Object obtained");
-                validRequest = true;
-            }
-
-            return weatherData;
         }
 
-        catch(Throwable t) {
-            Log.d("API Request: ", "Exception!");
-            t.printStackTrace();
-            validRequest = false;
+        else {
+
+            managePermissions.requestInternetPermission();
             return null;
         }
     }

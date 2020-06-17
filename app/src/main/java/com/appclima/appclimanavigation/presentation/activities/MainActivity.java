@@ -86,7 +86,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
         // Initialize main services:
+
         initializeLocation(); // location service
+
         speechRecognition = new SpeechRecognition(this, this); // voice recognition service
         voiceCommands = new VoiceCommands(this, this, locationService); // voice commands and answers
 
@@ -191,6 +193,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Method to initialize location updates:
     public void initializeLocation(){
+        ManagePermissions managePermissions = new ManagePermissions(this, this);
+
         // Creates object to access to the location:
         myFusedLocationClient = new FusedLocationProviderClient(this);
         myFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -201,9 +205,20 @@ public class MainActivity extends AppCompatActivity {
         locationService.getMyLastCoordinates();
         System.out.println(locationService.getMyLatitude() + "  " + locationService.getMyLongitude());
 
-        // Enable LocationUpdates if are enabled in user preferences
-        locationService.setLocationUpdates();
-        locationService.locationSettings();
+        if (managePermissions.isPermissionEnabled(Manifest.permission.ACCESS_FINE_LOCATION) &&
+                managePermissions.isPermissionEnabled(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+            // Enable LocationUpdates if are enabled in user preferences
+            locationService.setLocationUpdates();
+            locationService.locationSettings();
+
+        }
+
+        else {
+            managePermissions.requestLocationPermissions();
+        }
+
+
     }
 
 
